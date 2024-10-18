@@ -1,0 +1,351 @@
+﻿@model EnrollmentPortal.Models.Entities.SubjectFile
+
+@{
+    ViewData["Title"] = "Add Subject";
+}
+
+<div>
+    <div class="card card-box-shadow">
+        <div class="card-header">
+            <h2>Add Subject</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SFSUBJCODE" class="control-label">Subject Code</label>
+                        <input asp-for="SFSUBJCODE" class="form-control" />
+                        <span asp-validation-for="SFSUBJCODE" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="SFSUBJDESC" class="control-label">Description</label>
+                        <input asp-for="SFSUBJDESC" class="form-control" />
+                        <span asp-validation-for="SFSUBJDESC" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="SFSUBJUNITS" class="control-label">Units</label>
+                        <input asp-for="SFSUBJUNITS" class="form-control" />
+                        <span asp-validation-for="SFSUBJUNITS" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SFSUBJCATEGORY" class="control-label">Category</label>
+                        <select asp-for="SFSUBJCATEGORY" class="form-control" asp-items="ViewBag.CategoryOptions"></select>
+                        <span asp-validation-for="SFSUBJCATEGORY" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="SFSUBJREGOFRNG" class="control-label">Regular Offering</label>
+                        <select asp-for="SFSUBJREGOFRNG" class="form-control" asp-items="ViewBag.OfferingOptions"></select>
+                        <span asp-validation-for="SFSUBJREGOFRNG" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="SFSUBJSCHLYR" class="control-label">Year</label>
+                        <input asp-for="SFSUBJSCHLYR" class="form-control" />
+                        <span asp-validation-for="SFSUBJSCHLYR" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SFSUBJSTATUS" class="control-label"> Status </label>
+                        <select asp-for="SFSUBJSTATUS" class="form-control" asp-items="ViewBag.StatusOptions"></select>
+                        <span asp-validation-for="SFSUBJSTATUS" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="CourseId" class="control-label">Course</label>
+                        <select asp-for="CourseId" class="form-control" asp-items="ViewBag.CourseId"></select>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="SFSUBJCURRCODE" class="control-label">Curriculum</label>
+                        <input asp-for="SFSUBJCURRCODE" class="form-control" />
+                        <span asp-validation-for="SFSUBJCURRCODE" class="text-danger"></span>
+                    </div>
+                </div>
+                @* <div class="mb-3">
+                    <!-- Button to open modal for adding a new requisite subject -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequisiteModal">
+                        Add Requisite Subject
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <table class="table d-none d-md-table table-shadow" id="requisiteTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Code
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th>
+                                    Units
+                                </th>
+                                <th>
+                                    Category
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be added here dynamically -->
+                        </tbody>
+                    </table>
+
+                    <!-- Card Layout for Mobile -->
+                    <div class="d-md-none">
+                        
+                    </div>
+                </div> *@
+                <div class="form-group d-flex justify-content-end">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+
+            <div>
+                <a class="btn btn-outline-dark" asp-action="Index"> &#10502; Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding a requisite subject -->
+<div class="modal fade" id="addRequisiteModal" tabindex="-1" aria-labelledby="addRequisiteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSubjectModalLabel">Add Requisite Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <input type="text" class="w-50 m-2 form-control" id="subjectCodeInput" placeholder="Type to search subject...">
+                    <button id="searchmodalButton" class="m-2 btn-modal-search-width btn btn-primary">Search</button>
+                </div>
+                <div>
+                    <dl class="row">
+                        <input type="hidden" id="subjectIdField" />
+                        <dt class="col-3">
+                            Code
+                        </dt>
+                        <dd class="col-9" id="subjectCodeField">
+                            <!-- Subject Code will be dynamically populated here -->
+                        </dd>
+                        <dt class="col-3">
+                            Description
+                        </dt>
+                        <dd class="col-9" id="descriptionField">
+                            <!-- Description will be dynamically populated here -->
+                        </dd>
+                        <dt class="col-3">
+                            Unit
+                        </dt>
+                        <dd class="col-9" id="unitField">
+                            <!-- Unit will be dynamically populated here -->
+                        </dd>
+                        <dt class="col-3">
+                            Semester
+                        </dt>
+                        <dd class="col-9" id="semesterField">
+                            <!-- Semester will be dynamically populated here -->
+                        </dd>
+                        <dt class="col-3">
+                            Category
+                        </dt>
+                        <dd class="col-9" id="categoryField">
+                            <!-- Category will be dynamically populated here -->
+                        </dd>
+                        <dt class="col-3">
+                            Status
+                        </dt>
+                        <dd class="col-9" id="statusField">
+                            <!-- Status will be dynamically populated here -->
+                        </dd>
+                    </dl>
+                </div>
+                <div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="requisite" id="corequisite" value="Co-requisite">
+                        <label class="form-check-label" for="corequisite">
+                            Co-requisite
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="requisite" id="prerequisite" value="Prerequisite">
+                        <label class="form-check-label" for="prerequisite">
+                            Prerequisite
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-danger" id="requisiteError"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelRequisiteModal" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="addSubjectBtn" disabled>Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Clear All the fields in the modal
+        function clearAllModalFields() { 
+            $('#subjectCodeField').text('');
+            $('#descriptionField').text('');
+            $('#unitField').text('');
+            $('#semesterField').text('');
+            $('#categoryField').text('');
+            $('#statusField').text('');
+            $('#requisiteError').text('');
+            $('#subjectCodeInput').val('');
+        }
+
+        // The uncheck function as described earlier
+        function uncheckAllRadios() {
+            var radios = document.querySelectorAll('input[name="requisite"]');
+            radios.forEach(function (radio) {
+                radio.checked = false;
+            });
+        }
+
+        // Get the value of the checked radio button
+        function getCheckedRequisite() {
+            var checkedRequisite = document.querySelector('input[name="requisite"]:checked');
+            if (checkedRequisite) {
+                console.log(checkedRequisite.value); // Will log "corequisite" or "prerequisite"
+                return checkedRequisite.value; // Or return checkedRequisite.value if there's a "value" attribute
+            }
+            return null; // If no button is checked
+        }
+
+        // Trigger search when the user clicks the search button
+        $('#searchmodalButton').on('click', function () {
+            var searchTerm = $('#subjectCodeInput').val(); // Get the value from the input field
+
+            // Check if the input is not empty
+            if (searchTerm.length > 0) {
+                $.ajax({
+                    url: '@Url.Action("SearchSubjects", "SubjectFiles")', // Action to call
+                    type: 'GET',
+                    data: { searchTerm: searchTerm },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            // Assuming we only return one subject, you can modify to handle multiple subjects if needed
+                            if (response.subjects.length > 0) {
+                                var subject = response.subjects[0]; // First result or handle multiple as needed
+
+                                // Populate the fields with subject data
+                                $('#subjectCodeField').text(subject.sfsubjcode);
+                                $('#descriptionField').text(subject.sfsubjdesc);
+                                $('#unitField').text(subject.sfsubjunits);
+                                $('#semesterField').text(subject.sfsubjregofrng);
+                                $('#categoryField').text(subject.sfsubjcategory);
+                                $('#statusField').text(subject.sfsubjstatus);
+
+                                // Set the subjectId in the hidden field
+                                $('#subjectIdField').val(subject.id);
+
+                                // Enable the button only if all fields have valid data
+                                if (subject.id && subject.id !== '') {
+                                    $('#addSubjectBtn').prop('disabled', false); // Enable the button
+                                } else {
+                                    $('#addSubjectBtn').prop('disabled', true); // Disable the button
+                                }
+                            } else {
+                                // Clear fields if no results
+                                $('#subjectCodeField').text('No data');
+                                $('#descriptionField').text('No data');
+                                $('#unitField').text('No data');
+                                $('#semesterField').text('No data');
+                                $('#categoryField').text('No data');
+                                $('#statusField').text('No data');
+                            }
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while searching for subjects.');
+                    }
+                });
+            } else {
+                // Clear the fields if input is empty
+                $('#subjectCodeField').text('');
+                $('#descriptionField').text('');
+                $('#unitField').text('');
+                $('#semesterField').text('');
+                $('#categoryField').text('');
+                $('#statusField').text('');
+            }
+        });
+
+        // Trigger when the user clicks "Add" button in the modal
+        $('#addSubjectBtn').on('click', function () {
+            var requisiteCategory = getCheckedRequisite();
+            if (!requisiteCategory) {
+                $('#requisiteError').text('Please choose requisite category.');
+                return;
+            }
+            // Get the values from the <dl> fields
+            var subjectId = $('#subjectIdField').val(); // Assuming subjectId is stored somewhere hidden in the modal
+            var code = $('#subjectCodeField').text();
+            var description = $('#descriptionField').text();
+            var unit = $('#unitField').text();
+            var semester = $('#semesterField').text();
+            var category = $('#categoryField').text();
+            var status = $('#statusField').text();
+
+            // Check if the required fields are populated
+            if (description !== '' && unit !== '' && semester !== '' && category !== '' && status !== '') {
+                // Create a new row to append to the requisite table
+                var newRow = `
+                        <tr>
+                            <td>${code}</td>
+                            <td>${description}</td>
+                            <td>${unit}</td>
+                            <td>${requisiteCategory}</td>
+                            <td>
+                                <input type="hidden" name="requisiteSubjectIds[]" value="${subjectId}" />
+                                <input type="hidden" name="requisiteCategories[]" value="${category}" />
+                                <button type="button" class="btn btn-danger remove-requisite-btn">Remove</button>
+                            </td>
+                        </tr>
+                    `;
+
+                // Append the new row to the requisite table
+                $('#requisiteTable tbody').append(newRow);
+
+                // Close the modal after adding
+                uncheckAllRadios();
+                clearAllModalFields();
+                $('#addRequisiteModal').modal('hide');
+            } else {
+                alert('Please search and select a subject before adding.');
+            }
+        });
+
+        // Handle removing a row from the requisite table
+        $(document).on('click', '.remove-requisite-btn', function () {
+            $(this).closest('tr').remove();
+        });
+
+        // Clear the modal data if the cancel button click
+        $('#cancelRequisiteModal').on('click', function () {
+            uncheckAllRadios();
+            clearAllModalFields();
+        });
+    });
+</script>
+

@@ -1,0 +1,29 @@
+﻿@model EnrollmentPortal.Models.ViewModel.LoginViewModel
+
+<div class="login-container">
+    <div class="login">
+        <form asp-action="Login" method="post">
+            <h1> LOG IN</h1>
+            <label asp-for="Username"></label>
+            <input asp-for="Username" />
+            <span asp-validation-for="Username"></span>
+            <label asp-for="Password"></label>
+            <input asp-for="Password" type="password" />
+            <span asp-validation-for="Password"></span>
+
+            <!-- Display the specific model-level error in a span -->
+            @if (ViewData.ModelState["Invalid"] != null && ViewData.ModelState["Invalid"]?.Errors.Count > 0)
+            {
+                <span>
+                    @ViewData?.ModelState["Invalid"]?.Errors[0].ErrorMessage
+                </span>
+            }
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

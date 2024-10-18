@@ -1,0 +1,62 @@
+﻿@model EnrollmentPortal.Models.Entities.SubjectFile
+
+@{
+    ViewData["Title"] = "Subject Details";
+}
+
+<div>
+    <div class="card card-box-shadow">
+        <div class="card-header">
+            <h2>Subject Code: @Model?.SFSUBJCODE</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label class="control-label">Subject Code</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJCODE)" disabled />
+                </div>
+                <div class="form-group col-sm">
+                    <label class="control-label">Description</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJDESC)" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label class="control-label">Units</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJUNITS)" disabled />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label class="control-label">Category</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJCATEGORY)" disabled />
+                </div>
+                <div class="form-group col-sm">
+                    <label class="control-label">Regular Offering</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJREGOFRNG)" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label class="control-label">Year</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJSCHLYR)" disabled />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label class="control-label">Status</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJSTATUS)" disabled />
+                </div>
+                <div class="form-group col-sm">
+                    <label class="control-label">Course</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.Course.Code)" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label class="control-label">Curriculum</label>
+                    <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJCURRCODE)" disabled />
+                </div>
+            </div>
+
+            <div>
+                <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                <a class="btn btn-outline-dark mx-3" asp-action="Index"> &#10502; Back</a>
+            </div>
+        </div>
+    </div>
+</div>

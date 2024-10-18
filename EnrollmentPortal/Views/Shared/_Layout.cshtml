@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EnrollmentPortal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-zephyr.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/EnrollmentPortal.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            @if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <!-- Include the Navbar Partial View -->
+                @await Html.PartialAsync("_Navbar")
+            }
+        </header>
+        <div class="content @(User?.Identity != null && User.Identity.IsAuthenticated ? "p-4" : "")">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+
+        @if (User?.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <!-- Include the Footer Partial View -->
+            @await Html.PartialAsync("_Footer")
+        }
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

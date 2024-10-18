@@ -1,0 +1,96 @@
+﻿@model EnrollmentPortal.Models.Entities.SubjectSchedFile
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>SubjectSchedFile</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFEDPCODE)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFEDPCODE)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SubjectFile)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SubjectFile.SFSUBJCODE)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFSTARTTIME)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFSTARTTIME)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFENDTIME)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFENDTIME)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFDAYS)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFDAYS)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFROOM)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFROOM)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFMAXSIZE)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFMAXSIZE)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFCLASSSIZE)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFCLASSSIZE)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFSTATUS)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFSTATUS)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFXM)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFXM)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFSECTION)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFSECTION)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFSCHOOLYEAR)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFSCHOOLYEAR)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSFSSEM)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSFSSEM)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

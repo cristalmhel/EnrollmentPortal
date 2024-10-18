@@ -1,0 +1,179 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html, body {
+    padding: 0;
+    margin: 0px;
+    background-color: #F8F9FA;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.login-container {
+    background-image: url('https://i.ibb.co/DRs99t7/uc-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+
+.login {
+    border: 1px solid #000000;
+    width: 400px;
+    height: 500px;
+    background-image: url('https://i.ibb.co/rtCHCZY/uc-bldg.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.75);
+    overflow: hidden;
+}
+
+.login form {
+    display: block
+    box-sizing: border-box;
+    padding: 40px;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: brightness(40%);
+    flex-direction: column;
+    display: flex;
+    gap: 5px;
+}
+
+.login h1 {
+    font-weight: normal;
+    font-size: 24px;
+    text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+    margin-bottom: 60px;
+}
+
+.login label {
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding-left: 10px;
+    margin-top: 20px;
+}
+
+    .login span {
+        color: #ffcccc;
+        font-size: 10px;
+        letter-spacing: 1px;
+        padding-left: 10px;
+    }
+
+.login input {
+    background: rgba(255, 255, 255, 0.3);
+    height: 40px;
+    line-height: 40px;
+    border-radius: 20px;
+    padding: 0px 20px;
+    border: none;
+    color: #ffffff;
+}
+
+.login button {
+    background: rgb(45, 126, 231);
+    height: 40px;
+    line-height: 40px;
+    border-radius: 40px;
+    border: none;
+    margin: 10px 0px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+    color: #ffffff;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.footer {
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+    margin-top: auto;
+}
+
+/* Home Dashboard*/
+.carousel-h {
+    height: 400px;
+}
+
+.carousel-w {
+    width: 50%;
+}
+
+
+.sem-home-select {
+    width: 50%;
+}
+
+.card-box-shadow {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.table-shadow {
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+}
+
+.btn-width {
+    width: 18%;
+}
+
+.btn-modal-search-width {
+    width: 8rem;
+}
+
+@media (max-width: 768px) {
+    .carousel-w {
+        width: 100%;
+    }
+
+    .sem-home-select {
+        width: 100%;
+    }
+
+    .w-md-100 {
+        width: 100% !important;
+    }
+
+    .w-md-75 {
+        width: 75% !important;
+    }
+
+    .w-md-50 {
+        width: 50% !important;
+    }
+
+    .w-md-25 {
+        width: 25% !important;
+    }
+}

@@ -1,0 +1,152 @@
+﻿@using EnrollmentPortal.Helper
+@model PaginatedList<EnrollmentPortal.Models.Entities.StudentFile>
+
+@{
+    ViewData["Title"] = "Student Info";
+}
+
+<div>
+    <div class="row">
+        <h1>Student Information</h1>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form class="row" method="get" asp-action="Index">
+                <div class="form-group w-50 w-md-75">
+                    <input type="text" name="searchString" value="@ViewData["CurrentFilterStudent"]" class="form-control" placeholder="Search student..." />
+                </div>
+                <button type="submit" class="btn-width w-md-25 btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-4">
+            <div class="d-flex justify-content-end mb-3">
+                <a class="btn btn-primary px-2" asp-action="Create">Add Student</a>
+            </div>
+        </div>
+    </div>
+</div>
+<table class="table d-none d-md-table table-shadow">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                First Name
+            </th>
+            <th>
+                Middle Name
+            </th>
+            <th>
+                Year
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Course
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.STFSTUDLNAME)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.STFSTUDFNAME)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.STFSTUDMNAME)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.STFSTUDYEAR)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.STFSTUDSTATUS)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course.Code)
+            </td>
+            <td>
+                <a class="btn btn-outline-dark px-2 mx-1" asp-action="Edit" asp-route-id="@item.StudId">Edit</a>
+                <a class="btn btn-outline-dark px-2 mx-1" asp-action="Details" asp-route-id="@item.StudId">Details</a>
+                <a class="btn btn-danger px-2 mx-1" asp-action="Delete" asp-route-id="@item.StudId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<!-- Card Layout for Mobile -->
+<div class="d-md-none">
+    @foreach (var item in Model)
+    {
+        <div class="card card-box-shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Student: @Html.DisplayFor(modelItem => item.STFSTUDFNAME) @Html.DisplayFor(modelItem => item.STFSTUDLNAME)</h5>
+                <p class="card-text">
+                    <strong>ID:</strong> @Html.DisplayFor(modelItem => item.StudId) <br>
+                    <strong>Middle Name:</strong> @Html.DisplayFor(modelItem => item.STFSTUDMNAME) <br>
+                    <strong>Year:</strong> @Html.DisplayFor(modelItem => item.STFSTUDYEAR) <br>
+                    <strong>Status:</strong> @Html.DisplayFor(modelItem => item.STFSTUDSTATUS) <br>
+                    <strong>Course:</strong> @Html.DisplayFor(modelItem => item.Course.Code)
+                </p>
+                <div>
+                    <a class="btn btn-outline-dark px-2 mx-1" asp-action="Edit" asp-route-id="@item.StudId">Edit</a>
+                    <a class="btn btn-outline-dark px-2 mx-1" asp-action="Details" asp-route-id="@item.StudId">Details</a>
+                    <a class="btn btn-danger px-2 mx-1" asp-action="Delete" asp-route-id="@item.StudId">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Pagination Controls -->
+<nav class="d-flex justify-content-end" >
+    <ul class="pagination">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+        }
+
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+            </li>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+        }
+
+    </ul>
+</nav>
