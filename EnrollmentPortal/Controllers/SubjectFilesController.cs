@@ -112,6 +112,12 @@ namespace EnrollmentPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,SFSUBJCODE,SFSUBJDESC,SFSUBJUNITS,SFSUBJREGOFRNG,SFSUBJSCHLYR,SFSUBJCATEGORY,SFSUBJSTATUS,SFSUBJCURRCODE,CourseId,SubjectPreqFile")] SubjectFile subjectFile)
         {
+            // Check if a Subject with the same Code already exists
+            if (_context.SubjectFiles.Any(s => s.SFSUBJCODE == subjectFile.SFSUBJCODE))
+            {
+                ModelState.AddModelError("SFSUBJCODE", "A subject with this code already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(subjectFile);

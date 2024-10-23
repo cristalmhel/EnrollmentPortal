@@ -257,3 +257,4 @@ C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Debug\ne
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Debug\net8.0\System.Formats.Asn1.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\obj\Debug\net8.0\EnrollmentPortal.sourcelink.json

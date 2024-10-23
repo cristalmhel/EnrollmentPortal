@@ -68,12 +68,21 @@ namespace EnrollmentPortal.Controllers
                 new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = true },
                 new SelectListItem { Text = "Active", Value = "Active" },
                 new SelectListItem { Text = "Inactive", Value = "Inactive" },
-                new SelectListItem { Text = "Dissolved", Value = "Inactive" },
-                new SelectListItem { Text = "Restricted", Value = "Inactive" },
-                new SelectListItem { Text = "Closed", Value = "Inactive" }
+                new SelectListItem { Text = "Dissolved", Value = "Dissolved" },
+                new SelectListItem { Text = "Restricted", Value = "Restricted" },
+                new SelectListItem { Text = "Closed", Value = "Closed" }
             };
 
             ViewData["StatusOptions"] = statusOptions;
+
+            var ampmOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select meridiem", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "AM", Value = "AM" },
+                new SelectListItem { Text = "PM", Value = "PM" }
+            };
+
+            ViewData["AmPmOptions"] = ampmOptions;
 
             var subjects = new SelectList(_context.SubjectFiles.AsNoTracking(), "Id", "SFSUBJCODE");
             var subjectList = subjects.ToList();
@@ -95,14 +104,58 @@ namespace EnrollmentPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,SSFEDPCODE,SubjectFileId,SSFSTARTTIME,SSFENDTIME,SSFDAYS,SSFROOM,SSFMAXSIZE,SSFCLASSSIZE,SSFSTATUS,SSFXM,SSFSECTION,SSFSCHOOLYEAR,SSFSSEM")] SubjectSchedFile subjectSchedFile)
         {
+            // Check if a Subject with the same Code already exists
+            if (_context.SubjectSchedFiles.Any(s => s.SSFEDPCODE == subjectSchedFile.SSFEDPCODE))
+            {
+                ModelState.AddModelError("SSFEDPCODE", "A schedule with this code already exists.");
+            }
+
+            if (subjectSchedFile.SSFSTARTTIME != null && subjectSchedFile.SSFENDTIME != null)
+            {
+                if (subjectSchedFile.SSFSTARTTIME >= subjectSchedFile.SSFENDTIME)
+                {
+                    ModelState.AddModelError("SSFENDTIME", "Start time must be earlier than end time.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(subjectSchedFile);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubjectFileId"] = new SelectList(_context.SubjectFiles, "Id", "SFSUBJCODE", subjectSchedFile.SubjectFileId);
-            return View(subjectSchedFile);
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "Active", Value = "Active" },
+                new SelectListItem { Text = "Inactive", Value = "Inactive" },
+                new SelectListItem { Text = "Dissolved", Value = "Dissolved" },
+                new SelectListItem { Text = "Restricted", Value = "Restricted" },
+                new SelectListItem { Text = "Closed", Value = "Closed" }
+            };
+
+            ViewData["StatusOptions"] = statusOptions;
+
+            var ampmOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select meridiem", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "AM", Value = "AM" },
+                new SelectListItem { Text = "PM", Value = "PM" }
+            };
+
+            ViewData["AmPmOptions"] = ampmOptions;
+
+            var subjects = new SelectList(_context.SubjectFiles.AsNoTracking(), "Id", "SFSUBJCODE");
+            var subjectList = subjects.ToList();
+            subjectList.Insert(0, new SelectListItem
+            {
+                Text = "Select a subject",
+                Value = "",
+                Disabled = true,
+                Selected = true
+            });
+            ViewData["SubjectFileId"] = subjectList;
+            return View();
         }
 
         // GET: SubjectSchedFiles/Edit/5
@@ -113,12 +166,45 @@ namespace EnrollmentPortal.Controllers
                 return NotFound();
             }
 
-            var subjectSchedFile = await _context.SubjectSchedFiles.FindAsync(id);
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "Active", Value = "Active" },
+                new SelectListItem { Text = "Inactive", Value = "Inactive" },
+                new SelectListItem { Text = "Dissolved", Value = "Dissolved" },
+                new SelectListItem { Text = "Restricted", Value = "Restricted" },
+                new SelectListItem { Text = "Closed", Value = "Closed" }
+            };
+
+            ViewData["StatusOptions"] = statusOptions;
+
+            var ampmOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select meridiem", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "AM", Value = "AM" },
+                new SelectListItem { Text = "PM", Value = "PM" }
+            };
+
+            ViewData["AmPmOptions"] = ampmOptions;
+
+            var subjects = new SelectList(_context.SubjectFiles.AsNoTracking(), "Id", "SFSUBJCODE");
+            var subjectList = subjects.ToList();
+            subjectList.Insert(0, new SelectListItem
+            {
+                Text = "Select a subject",
+                Value = "",
+                Disabled = true,
+                Selected = true
+            });
+            ViewData["SubjectFileId"] = subjectList;
+
+            var subjectSchedFile = await _context.SubjectSchedFiles
+                .Include(s => s.SubjectFile)
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (subjectSchedFile == null)
             {
                 return NotFound();
             }
-            ViewData["SubjectFileId"] = new SelectList(_context.SubjectFiles, "Id", "SFSUBJCODE", subjectSchedFile.SubjectFileId);
             return View(subjectSchedFile);
         }
 
@@ -132,6 +218,14 @@ namespace EnrollmentPortal.Controllers
             if (id != subjectSchedFile.Id)
             {
                 return NotFound();
+            }
+
+            if (subjectSchedFile.SSFSTARTTIME != null && subjectSchedFile.SSFENDTIME != null)
+            {
+                if (subjectSchedFile.SSFSTARTTIME >= subjectSchedFile.SSFENDTIME)
+                {
+                    ModelState.AddModelError("SSFENDTIME", "Start time must be earlier than end time.");
+                }
             }
 
             if (ModelState.IsValid)
@@ -154,7 +248,42 @@ namespace EnrollmentPortal.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubjectFileId"] = new SelectList(_context.SubjectFiles, "Id", "SFSUBJCODE", subjectSchedFile.SubjectFileId);
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "Active", Value = "Active" },
+                new SelectListItem { Text = "Inactive", Value = "Inactive" },
+                new SelectListItem { Text = "Dissolved", Value = "Dissolved" },
+                new SelectListItem { Text = "Restricted", Value = "Restricted" },
+                new SelectListItem { Text = "Closed", Value = "Closed" }
+            };
+
+            ViewData["StatusOptions"] = statusOptions;
+
+            var ampmOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select meridiem", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "AM", Value = "AM" },
+                new SelectListItem { Text = "PM", Value = "PM" }
+            };
+
+            ViewData["AmPmOptions"] = ampmOptions;
+
+            var subjects = new SelectList(_context.SubjectFiles.AsNoTracking(), "Id", "SFSUBJCODE");
+            var subjectList = subjects.ToList();
+            subjectList.Insert(0, new SelectListItem
+            {
+                Text = "Select a subject",
+                Value = "",
+                Disabled = true,
+                Selected = true
+            });
+            ViewData["SubjectFileId"] = subjectList;
+
+            var subjectFile = await _context.SubjectFiles
+                .FirstOrDefaultAsync(s => s.Id == subjectSchedFile.SubjectFileId);
+            subjectSchedFile.SubjectFile = subjectFile;
+
             return View(subjectSchedFile);
         }
 

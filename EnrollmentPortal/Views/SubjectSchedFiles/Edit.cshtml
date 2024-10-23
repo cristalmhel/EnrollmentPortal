@@ -1,94 +1,150 @@
 ﻿@model EnrollmentPortal.Models.Entities.SubjectSchedFile
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Schedule";
 }
 
-<h1>Edit</h1>
-
-<h4>SubjectSchedFile</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="SSFEDPCODE" class="control-label"></label>
-                <input asp-for="SSFEDPCODE" class="form-control" />
-                <span asp-validation-for="SSFEDPCODE" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SubjectFileId" class="control-label"></label>
-                <select asp-for="SubjectFileId" class="form-control" asp-items="ViewBag.SubjectFileId"></select>
-                <span asp-validation-for="SubjectFileId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFSTARTTIME" class="control-label"></label>
-                <input asp-for="SSFSTARTTIME" class="form-control" />
-                <span asp-validation-for="SSFSTARTTIME" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFENDTIME" class="control-label"></label>
-                <input asp-for="SSFENDTIME" class="form-control" />
-                <span asp-validation-for="SSFENDTIME" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFDAYS" class="control-label"></label>
-                <input asp-for="SSFDAYS" class="form-control" />
-                <span asp-validation-for="SSFDAYS" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFROOM" class="control-label"></label>
-                <input asp-for="SSFROOM" class="form-control" />
-                <span asp-validation-for="SSFROOM" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFMAXSIZE" class="control-label"></label>
-                <input asp-for="SSFMAXSIZE" class="form-control" />
-                <span asp-validation-for="SSFMAXSIZE" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFCLASSSIZE" class="control-label"></label>
-                <input asp-for="SSFCLASSSIZE" class="form-control" />
-                <span asp-validation-for="SSFCLASSSIZE" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFSTATUS" class="control-label"></label>
-                <input asp-for="SSFSTATUS" class="form-control" />
-                <span asp-validation-for="SSFSTATUS" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFXM" class="control-label"></label>
-                <input asp-for="SSFXM" class="form-control" />
-                <span asp-validation-for="SSFXM" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFSECTION" class="control-label"></label>
-                <input asp-for="SSFSECTION" class="form-control" />
-                <span asp-validation-for="SSFSECTION" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFSCHOOLYEAR" class="control-label"></label>
-                <input asp-for="SSFSCHOOLYEAR" class="form-control" />
-                <span asp-validation-for="SSFSCHOOLYEAR" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SSFSSEM" class="control-label"></label>
-                <input asp-for="SSFSSEM" class="form-control" />
-                <span asp-validation-for="SSFSSEM" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
 <div>
-    <a asp-action="Index">Back to List</a>
+    <div class="card card-box-shadow">
+        <div class="card-header">
+            <h2>Edit EDP Code: @Model.SSFEDPCODE</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SubjectFileId" class="control-label">Subject</label>
+                        <select id="subjectFileId" asp-for="SubjectFileId" class="form-control" asp-items="ViewBag.SubjectFileId"></select>
+                        <span asp-validation-for="SubjectFileId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label class="control-label">Description</label>
+                        <input id="subjectDesc" class="form-control" disabled />
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label class="control-label">Units</label>
+                        <input id="subjectUnits" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFEDPCODE" class="control-label">EDP Code</label>
+                        <input asp-for="SSFEDPCODE" class="form-control" readonly/>
+                        <span asp-validation-for="SSFEDPCODE" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFSTARTTIME" class="control-label">Start Time</label>
+                        <input asp-for="SSFSTARTTIME" type="time" class="form-control" />
+                        <span asp-validation-for="SSFSTARTTIME" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="SSFENDTIME" class="control-label">End Time</label>
+                        <input asp-for="SSFENDTIME" type="time" class="form-control" />
+                        <span asp-validation-for="SSFENDTIME" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFXM" class="control-label">AM/PM</label>
+                        <select asp-for="SSFXM" class="form-control" asp-items="ViewBag.AmPmOptions"></select>
+                        <span asp-validation-for="SSFXM" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFDAYS" class="control-label">Days</label>
+                        <input asp-for="SSFDAYS" class="form-control" />
+                        <span asp-validation-for="SSFDAYS" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="SSFROOM" class="control-label">Room</label>
+                        <input asp-for="SSFROOM" class="form-control" />
+                        <span asp-validation-for="SSFROOM" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFSECTION" class="control-label">Section</label>
+                        <input asp-for="SSFSECTION" class="form-control" />
+                        <span asp-validation-for="SSFSECTION" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFSSEM" class="control-label">Semester</label>
+                        <input asp-for="SSFSSEM" class="form-control" />
+                        <span asp-validation-for="SSFSSEM" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="SSFSCHOOLYEAR" class="control-label">Year</label>
+                        <input asp-for="SSFSCHOOLYEAR" class="form-control" />
+                        <span asp-validation-for="SSFSCHOOLYEAR" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFSTATUS" class="control-label">Status</label>
+                        <select asp-for="SSFSTATUS" class="form-control" asp-items="ViewBag.StatusOptions"></select>
+                        <span asp-validation-for="SSFSTATUS" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                        <label asp-for="SSFMAXSIZE" class="control-label">Max Size</label>
+                        <input asp-for="SSFMAXSIZE" class="form-control" />
+                        <span asp-validation-for="SSFMAXSIZE" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                    </div>
+                </div>
+                <div class="form-group d-flex justify-content-end">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+
+            <div>
+                <a class="btn btn-outline-dark" asp-action="Index"> &#10502; Back</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var subjectDesc = "@Model.SubjectFile.SFSUBJDESC";
+        var subjectUnits = "@Model.SubjectFile.SFSUBJUNITS";
+
+        $('#subjectDesc').val(subjectDesc);
+        $('#subjectUnits').val(subjectUnits);
+
+        // Handle dropdown change event
+        $('#subjectFileId').change(function () {
+            var subjectId = $(this).val();
+
+            if (subjectId) {
+                // Make AJAX request to get subjects details
+                //console.log(subjectId);
+                $.ajax({
+                    url: '@Url.Action("GetSubject", "SubjectSchedFiles")', // URL to the controller action
+                    type: 'GET',
+                    data: { Id: subjectId }, // Send the selected subject's Id
+                    success: function (data) {
+                        //console.log(data);
+                        // Populate the fields with the returned data
+                        $('#subjectDesc').val(data.sfsubjdesc);
+                        $('#subjectUnits').val(data.sfsubjunits);
+                    },
+                    error: function () {
+                        alert("Error retrieving subject data.");
+                    }
+                });
+            } else {
+                // Clear the fields if no subject is selected
+                $('#subjectDesc').val('');
+                $('#subjectUnits').val('');
+            }
+        });
+    });
+</script>
