@@ -108,6 +108,7 @@ namespace EnrollmentPortal.Controllers
         // POST: SubjectFiles/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,SFSUBJCODE,SFSUBJDESC,SFSUBJUNITS,SFSUBJREGOFRNG,SFSUBJSCHLYR,SFSUBJCATEGORY,SFSUBJSTATUS,SFSUBJCURRCODE,CourseId,SubjectPreqFile")] SubjectFile subjectFile)
