@@ -152,6 +152,10 @@ html, body {
     width: 8rem;
 }
 
+
+/* Select2*/
+
+
 @media (max-width: 768px) {
     .carousel-w {
         width: 100%;

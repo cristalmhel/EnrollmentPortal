@@ -8,14 +8,14 @@ namespace EnrollmentPortal.Models.Entities
         [Key]
         public int Id { get; set; }  // Primary key for the table
 
-        [Required]
+        [Required(ErrorMessage = "Enroll date is required.")]
         public DateTime ENRHFSTUDDATEENROLL { get; set; }  // Date of enrollment
 
-        [Required]
+        [Required(ErrorMessage = "School year is required.")]
         [MaxLength(10)]
         public string? ENRHFSTUDSCHLYR { get; set; }  // School year (e.g., 2023-2024)
 
-        [Required]
+        [Required(ErrorMessage = "Semester is required.")]
         [MaxLength(10)]
         public string? ENRHFSTUDSEM { get; set; }  // Semester (e.g., 1st, 2nd)
 
@@ -24,11 +24,12 @@ namespace EnrollmentPortal.Models.Entities
 
         public double ENRHFSTUDTOTALUNITS { get; set; }  // Total number of units enrolled
 
+        [Required(ErrorMessage = "Status is required.")]
         [MaxLength(20)]
-        public string? ENRHFSTUDSTATUS { get; set; }  // Enrollment status (e.g., active, pending)
+        public string? ENRHFSTUDSTATUS { get; set; }  // Enrollment status
 
         // Foreign key to StudentFile
-        [Required]
+        [Required(ErrorMessage = "Student ID is required.")]
         public long StudentFileId { get; set; }  // Reference to StudentFile
         public StudentFile? StudentFile { get; set; }  // Navigation property to StudentFile
 

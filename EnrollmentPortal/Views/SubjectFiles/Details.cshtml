@@ -52,7 +52,38 @@
                     <input class="form-control" value="@Html.DisplayFor(model => model.SFSUBJCURRCODE)" disabled />
                 </div>
             </div>
+            <div class="mb-3">
+                <h2>
+                    Requisite Subject
+                </h2>
+            </div>
+            <div class="mb-3">
+                <table class="table d-none d-md-table table-shadow" id="requisiteTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Code
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Units
+                            </th>
+                            <th>
+                                Category
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be added here dynamically -->
+                    </tbody>
+                </table>
 
+                <!-- Card Layout for Mobile -->
+                <div class="d-md-none" id="requisiteCard">
+                </div>
+            </div>
             <div>
                 <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
                 <a class="btn btn-outline-dark mx-3" asp-action="Index"> &#10502; Back</a>
@@ -60,3 +91,51 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        // Deserialize JSON in JavaScript
+        const requisites = @Html.Raw(ViewData["SubjectPreqFilesJson"]);
+
+        if (requisites.$values) {
+            // work with the requisites data in JavaScript
+            requisites.$values.forEach(requisite => {
+                var newRowReq = `
+                                    <tr>
+                                        <td>${requisite.Code}</td>
+                                        <td>${requisite.Description}</td>
+                                        <td>${requisite.Units}</td>
+                                        <td>${requisite.Category}</td>
+                                    </tr>
+                                `;
+
+                // Append the new row to the requisite table
+                $('#requisiteTable tbody').append(newRowReq);
+
+                var cardNewRowReq = `
+                        <div class="card card-box-shadow mb-3">
+                            <div class="card-body">
+                                    <h5 class="card-title">Subject: ${requisite.Code} </h5>
+                                <p class="card-text">
+                                    <strong> Decription:</strong> ${requisite.Description} <br>
+                                    <strong>Units:</strong> ${requisite.Units} <br>
+                                    <strong>Category:</strong> ${requisite.Category}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+
+                $('#requisiteCard').append(cardNewRowReq);
+            });
+        }
+    });
+</script>

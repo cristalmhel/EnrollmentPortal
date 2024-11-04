@@ -9,6 +9,9 @@ using EnrollmentPortal.Data;
 using EnrollmentPortal.Models.Entities;
 using EnrollmentPortal.Helper;
 using System.Drawing.Printing;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using EnrollmentPortal.Models.ViewModel;
 
 namespace EnrollmentPortal.Controllers
 {
@@ -51,11 +54,48 @@ namespace EnrollmentPortal.Controllers
             }
 
             var subjectFile = await _context.SubjectFiles
-                .Include(s => s.Course)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            .Include(sf => sf.SubjectPreqFile)
+            .Include(s => s.Course)
+            .FirstOrDefaultAsync(sf => sf.Id == id);
+
             if (subjectFile == null)
             {
                 return NotFound();
+            }
+
+            if (subjectFile.SubjectPreqFile != null)
+            {
+                List<RequisiteViewModel> requisites = new List<RequisiteViewModel>();
+
+                foreach (var subpreq in subjectFile.SubjectPreqFile)
+                {
+                    var sub = await _context.SubjectFiles.FirstOrDefaultAsync(sf => sf.Id == subpreq.PrerequisiteSubjectId);
+
+                    // Create a new instance of RequisiteViewModel and add it to the list
+                    requisites.Add(new RequisiteViewModel
+                    {
+                        Id = sub?.Id,  // Nullable type handling
+                        Code = sub?.SFSUBJCODE ?? "N/A",  // Default value if null
+                        Description = sub?.SFSUBJDESC ?? "No Description",  // Default value if null
+                        Units = sub?.SFSUBJUNITS,  // Nullable type
+                        Category = subpreq.SUBJCATEGORY ?? "Unspecified"  // Default value if null
+                    });
+                }
+
+                // Configure JSON serialization options to handle references
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true
+                };
+
+
+                var sss = subjectFile.SubjectPreqFile;
+
+                var requisitesJson = JsonSerializer.Serialize(requisites, options);
+
+                // Store serialized JSON in ViewData
+                ViewData["SubjectPreqFilesJson"] = requisitesJson;
             }
 
             return View(subjectFile);
@@ -111,7 +151,7 @@ namespace EnrollmentPortal.Controllers
         // Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SFSUBJCODE,SFSUBJDESC,SFSUBJUNITS,SFSUBJREGOFRNG,SFSUBJSCHLYR,SFSUBJCATEGORY,SFSUBJSTATUS,SFSUBJCURRCODE,CourseId,SubjectPreqFile")] SubjectFile subjectFile)
+        public async Task<IActionResult> Create([Bind("Id,SFSUBJCODE,SFSUBJDESC,SFSUBJUNITS,SFSUBJREGOFRNG,SFSUBJSCHLYR,SFSUBJCATEGORY,SFSUBJSTATUS,SFSUBJCURRCODE,CourseId")] SubjectFile subjectFile, int[] requisiteSubjectIds, string[] requisiteCategories)
         {
             // Check if a Subject with the same Code already exists
             if (_context.SubjectFiles.Any(s => s.SFSUBJCODE == subjectFile.SFSUBJCODE))
@@ -123,6 +163,27 @@ namespace EnrollmentPortal.Controllers
             {
                 _context.Add(subjectFile);
                 await _context.SaveChangesAsync();
+
+                if (requisiteSubjectIds != null && requisiteSubjectIds.Length > 0)
+                {
+                    // Initialize the list for requisites in subjectFile
+                    subjectFile.SubjectPreqFile = new List<SubjectPreqFile>();
+
+                    for (int i = 0; i < requisiteSubjectIds.Length; i++)
+                    {
+                        var requisite = new SubjectPreqFile
+                        {
+                            SubjectFileId = subjectFile.Id,
+                            PrerequisiteSubjectId = requisiteSubjectIds[i],  
+                            SUBJCATEGORY = requisiteCategories[i]
+                        };
+                        subjectFile.SubjectPreqFile.Add(requisite);
+                    }
+
+                    // Add and save the prerequisites (if any)
+                    _context.SubjectPreqFiles.AddRange(subjectFile.SubjectPreqFile);
+                    await _context.SaveChangesAsync();  // Second save
+                }
                 return RedirectToAction(nameof(Index));
             }
 
@@ -214,10 +275,47 @@ namespace EnrollmentPortal.Controllers
             });
             ViewData["CourseId"] = courseList;
 
-            var subjectFile = await _context.SubjectFiles.FindAsync(id);
+            var subjectFile = await _context.SubjectFiles
+            .Include(sf => sf.SubjectPreqFile) // Include the collection of SubjectPreqFiles
+            .FirstOrDefaultAsync(sf => sf.Id == id); // Fetch by specific Id, for example
             if (subjectFile == null)
             {
                 return NotFound();
+            }
+
+            if (subjectFile.SubjectPreqFile != null)
+            {
+                List<RequisiteViewModel> requisites = new List<RequisiteViewModel>();
+
+                foreach (var subpreq in subjectFile.SubjectPreqFile)
+                {
+                    var sub = await _context.SubjectFiles.FirstOrDefaultAsync(sf => sf.Id == subpreq.PrerequisiteSubjectId);
+
+                    // Create a new instance of RequisiteViewModel and add it to the list
+                    requisites.Add(new RequisiteViewModel
+                    {
+                        Id = sub?.Id,  // Nullable type handling
+                        Code = sub?.SFSUBJCODE ?? "N/A",  // Default value if null
+                        Description = sub?.SFSUBJDESC ?? "No Description",  // Default value if null
+                        Units = sub?.SFSUBJUNITS,  // Nullable type
+                        Category = subpreq.SUBJCATEGORY ?? "Unspecified"  // Default value if null
+                    });
+                }
+
+                // Configure JSON serialization options to handle references
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true
+                };
+
+
+                var sss = subjectFile.SubjectPreqFile;
+
+                var requisitesJson = JsonSerializer.Serialize(requisites, options);
+
+                // Store serialized JSON in ViewData
+                ViewData["SubjectPreqFilesJson"] = requisitesJson;
             }
 
             return View(subjectFile);
@@ -228,7 +326,7 @@ namespace EnrollmentPortal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SFSUBJCODE,SFSUBJDESC,SFSUBJUNITS,SFSUBJREGOFRNG,SFSUBJSCHLYR,SFSUBJCATEGORY,SFSUBJSTATUS,SFSUBJCURRCODE,CourseId")] SubjectFile subjectFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SFSUBJCODE,SFSUBJDESC,SFSUBJUNITS,SFSUBJREGOFRNG,SFSUBJSCHLYR,SFSUBJCATEGORY,SFSUBJSTATUS,SFSUBJCURRCODE,CourseId")] SubjectFile subjectFile, int[] requisiteSubjectIds, string[] requisiteCategories)
         {
             if (id != subjectFile.Id)
             {
@@ -241,6 +339,39 @@ namespace EnrollmentPortal.Controllers
                 {
                     _context.Update(subjectFile);
                     await _context.SaveChangesAsync();
+
+                    // Find all prerequisite records where SubjectFileId matches the specified subject ID
+                    var requisitesToDelete = await _context.SubjectPreqFiles
+                        .Where(sp => sp.SubjectFileId == id)
+                        .ToListAsync();
+
+                    if (requisitesToDelete.Any())
+                    {
+                        // Remove each requisite entry from the context
+                        _context.SubjectPreqFiles.RemoveRange(requisitesToDelete);
+                        await _context.SaveChangesAsync(); // Save the deletion
+                    }
+
+                    if (requisiteSubjectIds != null && requisiteSubjectIds.Length > 0)
+                    {
+                        // Initialize the list for requisites in subjectFile
+                        subjectFile.SubjectPreqFile = new List<SubjectPreqFile>();
+
+                        for (int i = 0; i < requisiteSubjectIds.Length; i++)
+                        {
+                            var requisite = new SubjectPreqFile
+                            {
+                                SubjectFileId = subjectFile.Id,
+                                PrerequisiteSubjectId = requisiteSubjectIds[i],
+                                SUBJCATEGORY = requisiteCategories[i]
+                            };
+                            subjectFile.SubjectPreqFile.Add(requisite);
+                        }
+
+                        // Add and save the prerequisites (if any)
+                        _context.SubjectPreqFiles.AddRange(subjectFile.SubjectPreqFile);
+                        await _context.SaveChangesAsync();  // Second save
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -306,11 +437,48 @@ namespace EnrollmentPortal.Controllers
             }
 
             var subjectFile = await _context.SubjectFiles
+                .Include(sf => sf.SubjectPreqFile)
                 .Include(s => s.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (subjectFile == null)
             {
                 return NotFound();
+            }
+
+            if (subjectFile.SubjectPreqFile != null)
+            {
+                List<RequisiteViewModel> requisites = new List<RequisiteViewModel>();
+
+                foreach (var subpreq in subjectFile.SubjectPreqFile)
+                {
+                    var sub = await _context.SubjectFiles.FirstOrDefaultAsync(sf => sf.Id == subpreq.PrerequisiteSubjectId);
+
+                    // Create a new instance of RequisiteViewModel and add it to the list
+                    requisites.Add(new RequisiteViewModel
+                    {
+                        Id = sub?.Id,  // Nullable type handling
+                        Code = sub?.SFSUBJCODE ?? "N/A",  // Default value if null
+                        Description = sub?.SFSUBJDESC ?? "No Description",  // Default value if null
+                        Units = sub?.SFSUBJUNITS,  // Nullable type
+                        Category = subpreq.SUBJCATEGORY ?? "Unspecified"  // Default value if null
+                    });
+                }
+
+                // Configure JSON serialization options to handle references
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true
+                };
+
+
+                var sss = subjectFile.SubjectPreqFile;
+
+                var requisitesJson = JsonSerializer.Serialize(requisites, options);
+
+                // Store serialized JSON in ViewData
+                ViewData["SubjectPreqFilesJson"] = requisitesJson;
             }
 
             return View(subjectFile);
@@ -321,6 +489,18 @@ namespace EnrollmentPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Find related requisite entries in the SubjectPreqFile table
+            var relatedRequisites = await _context.SubjectPreqFiles
+                .Where(sp => sp.SubjectFileId == id)
+                .ToListAsync();
+
+            // Remove the related requisites first
+            if (relatedRequisites.Any())
+            {
+                _context.SubjectPreqFiles.RemoveRange(relatedRequisites);
+            }
+
+
             var subjectFile = await _context.SubjectFiles.FindAsync(id);
             if (subjectFile != null)
             {

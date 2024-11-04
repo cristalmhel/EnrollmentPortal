@@ -62,7 +62,7 @@
                         <span asp-validation-for="SFSUBJCURRCODE" class="text-danger"></span>
                     </div>
                 </div>
-                @* <div class="mb-3">
+                <div class="mb-3">
                     <!-- Button to open modal for adding a new requisite subject -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequisiteModal">
                         Add Requisite Subject
@@ -95,10 +95,10 @@
                     </table>
 
                     <!-- Card Layout for Mobile -->
-                    <div class="d-md-none">
+                    <div class="d-md-none" id="requisiteCard">
                         
                     </div>
-                </div> *@
+                </div>
                 <div class="form-group d-flex justify-content-end">
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
@@ -125,8 +125,8 @@
                     <button id="searchmodalButton" class="m-2 btn-modal-search-width btn btn-primary">Search</button>
                 </div>
                 <div>
+                    <input type="hidden" id="subjectIdField" />
                     <dl class="row">
-                        <input type="hidden" id="subjectIdField" />
                         <dt class="col-3">
                             Code
                         </dt>
@@ -199,6 +199,8 @@
 
 <script>
     $(document).ready(function () {
+        var reqDataId = 1;
+
         // Clear All the fields in the modal
         function clearAllModalFields() { 
             $('#subjectCodeField').text('');
@@ -265,12 +267,13 @@
                                 }
                             } else {
                                 // Clear fields if no results
-                                $('#subjectCodeField').text('No data');
-                                $('#descriptionField').text('No data');
-                                $('#unitField').text('No data');
-                                $('#semesterField').text('No data');
-                                $('#categoryField').text('No data');
-                                $('#statusField').text('No data');
+                                $('#subjectCodeField').text('');
+                                $('#descriptionField').text('');
+                                $('#unitField').text('');
+                                $('#semesterField').text('');
+                                $('#categoryField').text('');
+                                $('#statusField').text('');
+                                $('#requisiteError').text('This subject not found.');
                             }
                         } else {
                             alert(response.message);
@@ -288,6 +291,7 @@
                 $('#semesterField').text('');
                 $('#categoryField').text('');
                 $('#statusField').text('');
+                $('#requisiteError').text('Please search and select a subject.');
             }
         });
 
@@ -298,6 +302,7 @@
                 $('#requisiteError').text('Please choose requisite category.');
                 return;
             }
+
             // Get the values from the <dl> fields
             var subjectId = $('#subjectIdField').val(); // Assuming subjectId is stored somewhere hidden in the modal
             var code = $('#subjectCodeField').text();
@@ -307,30 +312,61 @@
             var category = $('#categoryField').text();
             var status = $('#statusField').text();
 
+            // Get all existing subject IDs from the hidden inputs
+            var existingIds = $("input[name='requisiteSubjectIds[]']").map(function () {
+                return $(this).val();
+            }).get(); // This returns an array of values
+
+            // Check if the new ID exists in the existing IDs
+            if (existingIds.includes(subjectId)) {
+                $('#requisiteError').text('This subject already exist in the Requisite table.');
+                return;
+            }
+
             // Check if the required fields are populated
             if (description !== '' && unit !== '' && semester !== '' && category !== '' && status !== '') {
                 // Create a new row to append to the requisite table
                 var newRow = `
-                        <tr>
-                            <td>${code}</td>
-                            <td>${description}</td>
-                            <td>${unit}</td>
-                            <td>${requisiteCategory}</td>
-                            <td>
-                                <input type="hidden" name="requisiteSubjectIds[]" value="${subjectId}" />
-                                <input type="hidden" name="requisiteCategories[]" value="${category}" />
-                                <button type="button" class="btn btn-danger remove-requisite-btn">Remove</button>
-                            </td>
-                        </tr>
-                    `;
+                                <tr data-id="${reqDataId}">
+                                    <td>${code}</td>
+                                    <td>${description}</td>
+                                    <td>${unit}</td>
+                                    <td>${requisiteCategory}</td>
+                                    <td>
+                                            <input type="hidden" name="requisiteSubjectIds[]" value="${subjectId}" />
+                                            <input type="hidden" name="requisiteCategories[]" value="${requisiteCategory}" />
+                                            <button type="button" class="btn btn-sm btn-danger remove-requisite-btn"><i class="bi bi-trash3"></i></button>
+                                    </td>
+                                </tr>
+                            `;
 
                 // Append the new row to the requisite table
                 $('#requisiteTable tbody').append(newRow);
+
+                var cardNewRow = `
+                            <div class="card card-box-shadow mb-3" data-id="${reqDataId}">
+                                <div class="card-body">
+                                            <h5 class="card-title">Subject: ${code} </h5>
+                                    <p class="card-text">
+                                                    <strong> Decription:</strong> ${description} <br>
+                                                    <strong>Units:</strong> ${unit} <br>
+                                                    <strong>Category:</strong> ${requisiteCategory}
+                                    </p>
+                                    <div>
+                                                <button type="button" class="btn btn-sm btn-danger remove-requisite-btn"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                $('#requisiteCard').append(cardNewRow);
+                reqDataId++;
 
                 // Close the modal after adding
                 uncheckAllRadios();
                 clearAllModalFields();
                 $('#addRequisiteModal').modal('hide');
+                $('#addSubjectBtn').prop('disabled', true); // Disable the button
             } else {
                 alert('Please search and select a subject before adding.');
             }
@@ -338,7 +374,12 @@
 
         // Handle removing a row from the requisite table
         $(document).on('click', '.remove-requisite-btn', function () {
-            $(this).closest('tr').remove();
+            // Get the data-id of the clicked button's closest row or card
+            var dataId = $(this).closest('[data-id]').data('id');
+
+            // Remove both the table row and the card with the matching data-id
+            $('tr[data-id="' + dataId + '"]').remove(); // Remove the row from the table
+            $('.card[data-id="' + dataId + '"]').remove(); // Remove the corresponding card
         });
 
         // Clear the modal data if the cancel button click

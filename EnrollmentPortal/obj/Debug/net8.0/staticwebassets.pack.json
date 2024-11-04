@@ -53,6 +53,18 @@
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
     },
     {
+      "Id": "C:\\Users\\Cristal\\Desktop\\ELDNET31\\EnrollmentPortal\\EnrollmentPortal\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-icons\\bootstrap-icons.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-icons\\bootstrap-icons.css"
+    },
+    {
+      "Id": "C:\\Users\\Cristal\\Desktop\\ELDNET31\\EnrollmentPortal\\EnrollmentPortal\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-icons\\fonts\\bootstrap-icons.woff",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-icons\\fonts\\bootstrap-icons.woff"
+    },
+    {
+      "Id": "C:\\Users\\Cristal\\Desktop\\ELDNET31\\EnrollmentPortal\\EnrollmentPortal\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-icons\\fonts\\bootstrap-icons.woff2",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-icons\\fonts\\bootstrap-icons.woff2"
+    },
+    {
       "Id": "C:\\Users\\Cristal\\Desktop\\ELDNET31\\EnrollmentPortal\\EnrollmentPortal\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
     },

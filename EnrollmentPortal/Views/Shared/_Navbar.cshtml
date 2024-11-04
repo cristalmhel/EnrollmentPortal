@@ -49,10 +49,10 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Home" && ViewContext?.RouteData?.Values["action"]?.ToString() == "Privacy" ? "active" : "")"
+                    <a class="nav-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Enrollment" ? "active" : "")"
                        asp-area=""
-                       asp-controller="Home"
-                       asp-action="Privacy">
+                       asp-controller="Enrollment"
+                       asp-action="Index">
                         Enrollment
                     </a>
                 </li>

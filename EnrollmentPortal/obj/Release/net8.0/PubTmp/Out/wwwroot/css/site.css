@@ -148,6 +148,9 @@ html, body {
     width: 18%;
 }
 
+.btn-modal-search-width {
+    width: 8rem;
+}
 
 @media (max-width: 768px) {
     .carousel-w {

@@ -63,43 +63,43 @@
                         <span asp-validation-for="SFSUBJCURRCODE" class="text-danger"></span>
                     </div>
                 </div>
-                @* <div class="mb-3">
-                <!-- Button to open modal for adding a new requisite subject -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequisiteModal">
-                Add Requisite Subject
-                </button>
+                <div class="mb-3">
+                    <!-- Button to open modal for adding a new requisite subject -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequisiteModal">
+                    Add Requisite Subject
+                    </button>
                 </div>
                 <div class="mb-3">
-                <table class="table d-none d-md-table table-shadow" id="requisiteTable">
-                <thead>
-                <tr>
-                <th>
-                Code
-                </th>
-                <th>
-                Description
-                </th>
-                <th>
-                Units
-                </th>
-                <th>
-                Category
-                </th>
-                <th>
-                Action
-                </th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Rows will be added here dynamically -->
-                </tbody>
-                </table>
+                    <table class="table d-none d-md-table table-shadow" id="requisiteTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Code
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th>
+                                    Units
+                                </th>
+                                <th>
+                                    Category
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Rows will be added here dynamically -->
+                        </tbody>
+                    </table>
 
-                <!-- Card Layout for Mobile -->
-                <div class="d-md-none">
+                    <!-- Card Layout for Mobile -->
+                    <div class="d-md-none" id="requisiteCard">
 
+                    </div>
                 </div>
-                </div> *@
                 <div class="form-group d-flex justify-content-end">
                     <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
@@ -195,3 +195,239 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var reqDataId = 1;
+
+        // Deserialize JSON in JavaScript
+        const requisites = @Html.Raw(ViewData["SubjectPreqFilesJson"]);
+
+        if (requisites.$values) {
+            // work with the requisites data in JavaScript
+            requisites.$values.forEach(requisite => {
+                var newRowReq = `
+                                <tr data-id="${reqDataId}">
+                                    <td>${requisite.Code}</td>
+                                    <td>${requisite.Description}</td>
+                                    <td>${requisite.Units}</td>
+                                    <td>${requisite.Category}</td>
+                                    <td>
+                                        <input type="hidden" name="requisiteSubjectIds[]" value="${requisite.Id}" />
+                                        <input type="hidden" name="requisiteCategories[]" value="${requisite.Category}" />
+                                        <button type="button" class="btn btn-danger remove-requisite-btn">Remove</button>
+                                    </td>
+                                </tr>
+                            `;
+
+                // Append the new row to the requisite table
+                $('#requisiteTable tbody').append(newRowReq);
+
+                var cardNewRowReq = `
+                    <div class="card card-box-shadow mb-3" data-id="${reqDataId}">
+                        <div class="card-body">
+                                <h5 class="card-title">Subject: ${requisite.Code} </h5>
+                            <p class="card-text">
+                                        <strong> Decription:</strong> ${requisite.Description} <br>
+                                        <strong>Units:</strong> ${requisite.Units} <br>
+                                        <strong>Category:</strong> ${requisite.Category}
+                            </p>
+                            <div>
+                                <button type="button" class="btn btn-danger remove-requisite-btn">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#requisiteCard').append(cardNewRowReq);
+                reqDataId++;
+            });
+        }
+
+        // Clear All the fields in the modal
+        function clearAllModalFields() {
+            $('#subjectCodeField').text('');
+            $('#descriptionField').text('');
+            $('#unitField').text('');
+            $('#semesterField').text('');
+            $('#categoryField').text('');
+            $('#statusField').text('');
+            $('#requisiteError').text('');
+            $('#subjectCodeInput').val('');
+        }
+
+        // The uncheck function as described earlier
+        function uncheckAllRadios() {
+            var radios = document.querySelectorAll('input[name="requisite"]');
+            radios.forEach(function (radio) {
+                radio.checked = false;
+            });
+        }
+
+        // Get the value of the checked radio button
+        function getCheckedRequisite() {
+            var checkedRequisite = document.querySelector('input[name="requisite"]:checked');
+            if (checkedRequisite) {
+                console.log(checkedRequisite.value); // Will log "corequisite" or "prerequisite"
+                return checkedRequisite.value; // Or return checkedRequisite.value if there's a "value" attribute
+            }
+            return null; // If no button is checked
+        }
+
+        // Trigger search when the user clicks the search button
+        $('#searchmodalButton').on('click', function () {
+            var searchTerm = $('#subjectCodeInput').val(); // Get the value from the input field
+
+            // Check if the input is not empty
+            if (searchTerm.length > 0) {
+                $.ajax({
+                    url: '@Url.Action("SearchSubjects", "SubjectFiles")', // Action to call
+                    type: 'GET',
+                    data: { searchTerm: searchTerm },
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            // Assuming we only return one subject, you can modify to handle multiple subjects if needed
+                            if (response.subjects.length > 0) {
+                                var subject = response.subjects[0]; // First result or handle multiple as needed
+
+                                // Populate the fields with subject data
+                                $('#subjectCodeField').text(subject.sfsubjcode);
+                                $('#descriptionField').text(subject.sfsubjdesc);
+                                $('#unitField').text(subject.sfsubjunits);
+                                $('#semesterField').text(subject.sfsubjregofrng);
+                                $('#categoryField').text(subject.sfsubjcategory);
+                                $('#statusField').text(subject.sfsubjstatus);
+
+                                // Set the subjectId in the hidden field
+                                $('#subjectIdField').val(subject.id);
+
+                                // Enable the button only if all fields have valid data
+                                if (subject.id && subject.id !== '') {
+                                    $('#addSubjectBtn').prop('disabled', false); // Enable the button
+                                } else {
+                                    $('#addSubjectBtn').prop('disabled', true); // Disable the button
+                                }
+                            } else {
+                                // Clear fields if no results
+                                $('#subjectCodeField').text('No data');
+                                $('#descriptionField').text('No data');
+                                $('#unitField').text('No data');
+                                $('#semesterField').text('No data');
+                                $('#categoryField').text('No data');
+                                $('#statusField').text('No data');
+                            }
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while searching for subjects.');
+                    }
+                });
+            } else {
+                // Clear the fields if input is empty
+                $('#subjectCodeField').text('');
+                $('#descriptionField').text('');
+                $('#unitField').text('');
+                $('#semesterField').text('');
+                $('#categoryField').text('');
+                $('#statusField').text('');
+            }
+        });
+
+        // Trigger when the user clicks "Add" button in the modal
+        $('#addSubjectBtn').on('click', function () {
+            var requisiteCategory = getCheckedRequisite();
+            if (!requisiteCategory) {
+                $('#requisiteError').text('Please choose requisite category.');
+                return;
+            }
+            // Get the values from the <dl> fields
+            var subjectId = $('#subjectIdField').val(); // Assuming subjectId is stored somewhere hidden in the modal
+            var code = $('#subjectCodeField').text();
+            var description = $('#descriptionField').text();
+            var unit = $('#unitField').text();
+            var semester = $('#semesterField').text();
+            var category = $('#categoryField').text();
+            var status = $('#statusField').text();
+
+            // Get all existing subject IDs from the hidden inputs
+            var existingIds = $("input[name='requisiteSubjectIds[]']").map(function () {
+                return $(this).val();
+            }).get(); // This returns an array of values
+
+            // Check if the new ID exists in the existing IDs
+            if (existingIds.includes(subjectId)) {
+                $('#requisiteError').text('This subject already exist in the Requisite table.');
+                return;
+            }
+
+            // Check if the required fields are populated
+            if (description !== '' && unit !== '' && semester !== '' && category !== '' && status !== '') {
+                // Create a new row to append to the requisite table
+                var newRow = `
+                            <tr data-id="${reqDataId}">
+                                <td>${code}</td>
+                                <td>${description}</td>
+                                <td>${unit}</td>
+                                <td>${requisiteCategory}</td>
+                                <td>
+                                        <input type="hidden" name="requisiteSubjectIds[]" value="${subjectId}" />
+                                        <input type="hidden" name="requisiteCategories[]" value="${requisiteCategory}" />
+                                    <button type="button" class="btn btn-danger remove-requisite-btn">Remove</button>
+                                </td>
+                            </tr>
+                        `;
+
+                // Append the new row to the requisite table
+                $('#requisiteTable tbody').append(newRow);
+
+                var cardNewRow = `
+                        <div class="card card-box-shadow mb-3" data-id="${reqDataId}">
+                            <div class="card-body">
+                                        <h5 class="card-title">Subject: ${code} </h5>
+                                <p class="card-text">
+                                                <strong> Decription:</strong> ${description} <br>
+                                                <strong>Units:</strong> ${unit} <br>
+                                                <strong>Category:</strong> ${requisiteCategory}
+                                </p>
+                                <div>
+                                    <button type="button" class="btn btn-danger remove-requisite-btn">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                $('#requisiteCard').append(cardNewRow);
+                reqDataId++;
+
+                // Close the modal after adding
+                uncheckAllRadios();
+                clearAllModalFields();
+                $('#addRequisiteModal').modal('hide');
+            } else {
+                alert('Please search and select a subject before adding.');
+            }
+        });
+
+        // Handle removing a row from the requisite table
+        $(document).on('click', '.remove-requisite-btn', function () {
+            // Get the data-id of the clicked button's closest row or card
+            var dataId = $(this).closest('[data-id]').data('id');
+
+            // Remove both the table row and the card with the matching data-id
+            $('tr[data-id="' + dataId + '"]').remove(); // Remove the row from the table
+            $('.card[data-id="' + dataId + '"]').remove(); // Remove the corresponding card
+        });
+
+        // Clear the modal data if the cancel button click
+        $('#cancelRequisiteModal').on('click', function () {
+            uncheckAllRadios();
+            clearAllModalFields();
+        });
+    });
+</script>

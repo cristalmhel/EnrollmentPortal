@@ -14,6 +14,6 @@
     <WebStackScaffolding_DbContextTypeFullName>EnrollmentPortal.Data.ApplicationDbContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_IsViewGenerationSelected>True</WebStackScaffolding_IsViewGenerationSelected>
-    <NameOfLastUsedPublishProfile>C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\Properties\PublishProfiles\FolderProfile1.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\Properties\PublishProfiles\FolderProfile2.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

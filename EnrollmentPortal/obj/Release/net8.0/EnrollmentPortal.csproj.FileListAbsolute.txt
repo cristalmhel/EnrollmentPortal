@@ -75,7 +75,6 @@ C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\System.Runtime.Caching.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\System.Security.Permissions.dll
-C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\System.Text.Json.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\System.Windows.Extensions.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\af\Humanizer.resources.dll
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\ar\Humanizer.resources.dll
@@ -251,3 +250,11 @@ C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\obj\Release\
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\obj\Release\net8.0\EnrollmentPortal.pdb
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\obj\Release\net8.0\EnrollmentPortal.genruntimeconfig.cache
 C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\obj\Release\net8.0\ref\EnrollmentPortal.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\Microsoft.Extensions.Logging.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\bin\Release\net8.0\System.Formats.Asn1.dll
+C:\Users\Cristal\Desktop\ELDNET31\EnrollmentPortal\EnrollmentPortal\obj\Release\net8.0\EnrollmentPortal.sourcelink.json

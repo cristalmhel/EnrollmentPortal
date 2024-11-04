@@ -1,0 +1,60 @@
+﻿@model EnrollmentPortal.Models.Entities.EnrollmentHeaderFile
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>EnrollmentHeaderFile</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ENRHFSTUDDATEENROLL)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ENRHFSTUDDATEENROLL)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ENRHFSTUDSCHLYR)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ENRHFSTUDSCHLYR)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ENRHFSTUDSEM)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ENRHFSTUDSEM)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ENRHFSTUDENCODER)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ENRHFSTUDENCODER)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ENRHFSTUDTOTALUNITS)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ENRHFSTUDTOTALUNITS)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ENRHFSTUDSTATUS)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ENRHFSTUDSTATUS)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StudentFile)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StudentFile.STFSTUDFNAME)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

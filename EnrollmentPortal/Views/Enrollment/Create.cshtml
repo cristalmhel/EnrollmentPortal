@@ -1,0 +1,505 @@
+﻿@model EnrollmentPortal.Models.Entities.EnrollmentHeaderFile
+
+@{
+    ViewData["Title"] = "Enrollment Form";
+}
+
+<div>
+    <div class="card card-box-shadow">
+        <div class="card-header">
+            <h2>Enroll Form</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <h5>Student Info</h5>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="StudentFileId" class="control-label"> Student Id </label>
+                        <select asp-for="StudentFileId" class="form-control" id="studentSelect" asp-items="ViewBag.StudentFileId"></select>
+                        <span asp-validation-for="StudentFileId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-sm">
+                    </div>
+                    <div class=" form-group col-sm">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label class="control-label">First Name</label>
+                        <input id="studFname" class="form-control" disabled />
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label class="control-label">Middle Name</label>
+                        <input id="studMname" class="form-control" disabled />
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label class="control-label">Last Name</label>
+                        <input id="studLname" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label class="control-label">Status</label>
+                        <input id="studStatus" class="form-control" disabled />
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label class="control-label">Course</label>
+                        <input id="studCourse" class="form-control" disabled />
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="ENRHFSTUDSEM" class="control-label">Semester</label>
+                        <select asp-for="ENRHFSTUDSEM" class="form-control" asp-items="ViewBag.SemesterOptions"></select>
+                        <span asp-validation-for="ENRHFSTUDSEM" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-group col-sm">
+                        <label asp-for="ENRHFSTUDDATEENROLL" class="control-label">Date Enroll</label>
+                        <input asp-for="ENRHFSTUDDATEENROLL" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="ENRHFSTUDDATEENROLL" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="ENRHFSTUDSCHLYR" class="control-label">School Year</label>
+                        <select asp-for="ENRHFSTUDSCHLYR" class="form-control" asp-items="ViewBag.SchoolYearOptions"></select>
+                        <span asp-validation-for="ENRHFSTUDSCHLYR" class="text-danger"></span>
+                    </div>
+                    <div class=" form-group col-sm">
+                        <label asp-for="ENRHFSTUDSTATUS" class="control-label">Status</label>
+                        <select asp-for="ENRHFSTUDSTATUS" class="form-control" asp-items="ViewBag.StatusOptions"></select>
+                        <span asp-validation-for="ENRHFSTUDSTATUS" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3 mt-2">
+                    <h5>Schedules</h5>
+                </div>
+                <div class="mb-3">
+                    <!-- Button to open modal for adding a new subject -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addScheduleModal">
+                        Add Schedule
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <table class="table d-none d-md-table table-shadow" id="scheduleTable">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>
+                                    EDP Code
+                                </th>
+                                <th>
+                                    Subject Code
+                                </th>
+                                <th>
+                                    Units
+                                </th>
+                                <th>
+                                    Start Time
+                                </th>
+                                <th>
+                                    End Time
+                                </th>
+                                <th>
+                                    Days
+                                </th>
+                                <th>
+                                    Room
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be added here dynamically -->
+                        </tbody>
+                    </table>
+
+                    <!-- Card Layout for Mobile -->
+                    <div class="d-md-none" id="scheduleCard">
+                    </div>
+                </div>
+                <div class="mb-3 w-25 w-md-50">
+                    <label asp-for="ENRHFSTUDTOTALUNITS" class="control-label"> Total Units</label>
+                    <input asp-for="ENRHFSTUDTOTALUNITS" id="totalUnitsField" class="form-control" value="0" readonly/>
+                </div>
+                <div class="form-group d-flex justify-content-end">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+
+            <div>
+                <a class="btn btn-outline-dark" asp-action="Index"> &#10502; Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding a requisite subject -->
+<div class="modal fade" id="addScheduleModal" tabindex="-1" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addScheduleModalLabel">Add Schedule</h5>
+                <button type="button" class="btn-close" id="closeScheduleModal" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <select  class="form-select" id="searchEdpSelected" asp-items="ViewBag.edpsList"></select>
+                </div>
+                <div>
+                    <input type="hidden" id="subjectSchedFileId" />
+                    <input type="hidden" id="subjectFileId" />
+                    <dl class="row">
+                        <dt class="col-4">
+                           EDP Code
+                        </dt>
+                        <dd class="col-8" id="edpCodeField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Subject Code
+                        </dt>
+                        <dd class="col-8" id="subjectCodeField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Units
+                        </dt>
+                        <dd class="col-8" id="subjectUnitField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Start time
+                        </dt>
+                        <dd class="col-8" id="startTimeField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            End Time
+                        </dt>
+                        <dd class="col-8" id="endTimeField">
+                            <!-- dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            AM/PM
+                        </dt>
+                        <dd class="col-8" id="ampmField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Days
+                        </dt>
+                        <dd class="col-8" id="daysField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Room
+                        </dt>
+                        <dd class="col-8" id="roomField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Class size
+                        </dt>
+                        <dd class="col-8" id="classSizeField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                        <dt class="col-4">
+                            Max size
+                        </dt>
+                        <dd class="col-8" id="maxSizeField">
+                            <!--  dynamically populated here -->
+                        </dd>
+                    </dl>
+                </div>
+                <div>
+                    <p class="text-danger" id="edpModalError"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelEDPModal" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="addScheduleBtn" disabled>Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+         var schedDataId = 1;
+
+        getStudentInfo();
+
+        $('#studentSelect').select2({
+            placeholder: "Search student ID",
+            allowClear: false,
+            theme: "bootstrap-5",
+            containerCssClass: "select2--small",
+            dropdownCssClass: "select2--small",
+        });
+
+        $('#addScheduleModal').on('shown.bs.modal', function () {
+            $('#searchEdpSelected').select2({
+                dropdownParent: $('#addScheduleModal'),
+                placeholder: "Search EDP Code",
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            });
+
+            // Prevent the modal from closing when typing in the Select2 search field
+            $(document).on('select2:open', function () {
+                let select2SearchField = document.querySelector('.select2-search__field');
+                if (select2SearchField) {
+                    select2SearchField.addEventListener('keydown', function (e) {
+                        e.stopPropagation(); // Stop key events from reaching the modal
+                    });
+                }
+            });
+
+            $('#searchEdpSelected').off('change').on('change', function () {
+                var edpCodeSelected = $(this).val();
+                $('#edpModalError').text('');
+
+                // Check if the input is not empty
+                if (edpCodeSelected.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("SearchEDP", "Enrollment")', // Action to call
+                        type: 'GET',
+                        data: { searchTerm: edpCodeSelected },
+                        success: function (response) {
+                            console.log(response);
+                            if (response.success) {
+                                // Assuming we only return one schedule
+                                if (response.schedules.length > 0) {
+                                    var schedule = response.schedules[0];
+
+                                    // Populate the fields with schedule data
+                                    $('#edpCodeField').text(schedule.ssfedpcode);
+                                    $('#subjectCodeField').text(schedule.subjectCode);
+                                    $('#subjectUnitField').text(schedule.subjectUnit);
+                                    $('#startTimeField').text(schedule.ssfstarttime);
+                                    $('#endTimeField').text(schedule.ssfendtime);
+                                    $('#ampmField').text(schedule.ssfxm);
+                                    $('#daysField').text(schedule.ssfdays);
+                                    $('#classSizeField').text(schedule.ssfclasssize);
+                                    $('#maxSizeField').text(schedule.ssfmaxsize);
+                                    $('#roomField').text(schedule.ssfroom);
+
+                                    // Set the subjectId in the hidden field
+                                    $('#subjectSchedFileId').val(schedule.id);
+                                    $('#subjectFileId').val(schedule.subjectId);
+
+
+                                    // Enable the button only if all fields have valid data
+                                    if (schedule.id && schedule.id !== '') {
+                                        $('#addScheduleBtn').prop('disabled', false); // Enable the button
+                                    } else if (schedule.ssfclasssize >= schedule.ssfmaxsize) {
+                                        $('#addScheduleBtn').prop('disabled', true); // Disable the button
+                                        $('#edpModalError').text('This schedule is full.');
+                                    } else {
+                                        $('#addScheduleBtn').prop('disabled', true); // Disable the button
+                                    }
+                                } else {
+                                    // Clear fields if no results
+                                    clearAllModalFields();
+                                    $('#edpModalError').text('This schedule not found.');
+                                }
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Error occurred while searching for schedule.');
+                        }
+                    });
+                } else {
+                    // Clear the fields if input is empty
+                    clearAllModalFields();
+                    $('#edpModalError').text('Please search and select a schedule.');
+                }
+            });
+        });
+
+        // Trigger when the user clicks "Add" button in the modal
+        $('#addScheduleBtn').on('click', function () {
+            // Get the values from the <dl> fields
+            // Populate the fields with schedule data
+            var edpCode = $('#edpCodeField').text();
+            var subjectCode = $('#subjectCodeField').text();
+            var subUnits = $('#subjectUnitField').text();
+            var startTime = $('#startTimeField').text();
+            var endTime = $('#endTimeField').text();
+            var ampm = $('#ampmField').text();
+            var schedDays = $('#daysField').text();
+            var classSize = $('#classSizeField').text();
+            var maxSize = $('#maxSizeField').text();
+            var room = $('#roomField').text();
+
+            var subjectSchedId = $('#subjectSchedFileId').val();
+            var subjectId = $('#subjectFileId').val();
+
+            // Get all existing subject IDs from the hidden inputs
+            var existingIds = $("input[name='subjectScheduleIds[]']").map(function () {
+                return $(this).val();
+            }).get(); // This returns an array of values
+
+            // Check if the new ID exists in the existing IDs
+            if (existingIds.includes(subjectSchedId)) {
+                $('#edpModalError').text('This schedule already exist in the schedule table.');
+                return;
+            }
+
+            // Check if the required fields are populated
+            if (subjectSchedId !== '' && subjectId !== '') {
+                // Create a new row to append to the requisite table
+                var newRow = `
+                    <tr data-id="${schedDataId}">
+                        <td>${edpCode}</td>
+                        <td>${subjectCode}</td>
+                        <td>${subUnits}</td>
+                        <td>${startTime}</td>
+                        <td>${endTime}</td>
+                        <td>${schedDays}</td>
+                        <td>${room}</td>
+                        <td>
+                            <input type="hidden" name="subjectScheduleIds[]" value="${subjectSchedId}" />
+                            <input type="hidden" name="subjectIds[]" value="${subjectId}" />
+                            <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                        </td>
+                    </tr>
+                `;
+
+                // Append the new row to the schedule table
+                $('#scheduleTable tbody').append(newRow);
+
+                var cardNewRow = `
+                    <div class="card card-box-shadow mb-3" data-id="${schedDataId}">
+                        <div class="card-body">
+                            <h5 class="card-title">EDP Code: ${edpCode} </h5>
+                            <p class="card-text">
+                                <strong> Subject Code:</strong> ${subjectCode} <br>
+                                <strong> Units:</strong> ${subUnits} <br>
+                                <strong>Start Time:</strong> ${startTime} <br>
+                                <strong>End Time:</strong> ${endTime} <br>
+                                <strong>Days:</strong> ${schedDays} <br>
+                                <strong>Room:</strong> ${room}
+                            </p>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#scheduleCard').append(cardNewRow);
+                schedDataId++;
+
+                $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(subUnits));
+
+                // Close the modal after adding
+                clearAllModalFields();
+                $('#addScheduleModal').modal('hide');
+                $('#addScheduleBtn').prop('disabled', true); // Disable the button
+            } else {
+                alert('Please search and select a subject before adding.');
+            }
+        });
+
+        // Clear All the fields in the modal
+        function clearAllModalFields() {
+            $('#subjectSchedFileId').text('');
+            $('#subjectFileId').text('');
+            $('#edpCodeField').text('');
+            $('#subjectCodeField').text('');
+            $('#subjectUnitField').text('');
+            $('#startTimeField').text('');
+            $('#endTimeField').text('');
+            $('#ampmField').text('');
+            $('#daysField').text('');
+            $('#classSizeField').text('');
+            $('#roomField').text('');
+            $('#maxSizeField').text('');
+            $('#searchEdpSelected').val('');
+            $('#edpModalError').text('');
+            $('#addScheduleBtn').prop('disabled', true);
+        }
+
+        // Handle Stdent Id dropdown change event
+        $('#studentSelect').change(function () {
+            getStudentInfo();
+        });
+
+        function getStudentInfo() { 
+            var studentId = $('#studentSelect').val();
+
+            if (studentId) {
+                // Make AJAX request to get subjects details
+                //console.log(subjectId);
+                $.ajax({
+                    url: '@Url.Action("GetStudent", "Enrollment")', // URL to the controller action
+                    type: 'GET',
+                    data: { Id: studentId }, // Send the selected student's Id
+                    success: function (data) {
+                        console.log(data);
+                        // Populate the fields with the returned data
+                        $('#studFname').val(data.stfstudfname);
+                        $('#studMname').val(data.stfstudmname);
+                        $('#studLname').val(data.stfstudlname);
+                        $('#studStatus').val(data.stfstudstatus);
+                        $('#studCourse').val(data.course.code);
+                    },
+                    error: function () {
+                        alert("Error retrieving subject data.");
+                    }
+                });
+            } else {
+                // Clear the fields if no student is selected
+                $('#studFname').val('');
+                $('#studMname').val('');
+                $('#studLname').val('');
+                $('#studStatus').val('');
+                $('#studCourse').val('');
+            }
+        }
+
+        // Clear the modal data
+        $('#cancelEDPModal').on('click', function () {
+            clearAllModalFields();
+        });
+
+        $('#closeScheduleModal').on('click', function () {
+            clearAllModalFields();
+        });
+
+        // Listen for when the modal is completely hidden
+        $('#addScheduleModal').on('hidden.bs.modal', function () {
+            clearAllModalFields();
+        });
+
+
+        // Handle removing a row from the requisite table
+        $(document).on('click', '.remove-schedule-btn', function () {
+            // Get the data-id of the clicked button's closest row or card
+            var dataId = $(this).closest('[data-id]').data('id');
+
+            var unitValue = $('tr[data-id="' + dataId + '"]').find('td').eq(2).text();
+
+            $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) - parseInt(unitValue));
+
+            // Remove both the table row and the card with the matching data-id
+            $('tr[data-id="' + dataId + '"]').remove(); // Remove the row from the table
+            $('.card[data-id="' + dataId + '"]').remove(); // Remove the corresponding card
+        });
+
+    });
+</script>
