@@ -1,0 +1,85 @@
+# Ignore Visual Studio specific files
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Ignore build outputs
+bin/
+obj/
+out/
+
+# Ignore publish outputs
+publish/
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Ignore files related to Microsoft Azure
+azds/
+.localhistory/
+
+# Ignore Rider and ReSharper files
+.idea/
+*.sln.iml
+_ReSharper*/
+*.[rR]e[Ss]harper
+
+# Ignore ASP.NET / Kestrel runtime secrets
+**/appsettings.Development.json
+**/secrets.json
+**/appsettings.*.json
+
+# Ignore logs and temp files
+*.log
+*.tlog
+*.pdb
+*.cache
+*.bak
+*.backup
+*.swp
+*.tmp
+*.temp
+*.DS_Store
+*.pyc
+Thumbs.db
+
+# Ignore the node_modules directory if using npm for front-end packages
+node_modules/
+
+# Ignore Yarn files if using Yarn as package manager
+.yarn/
+.yarnrc
+.yarn-cache/
+.pnp.*
+
+# Ignore npm package-lock.json if using npm
+package-lock.json
+
+# Ignore files created by the OS
+.DS_Store
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Ignore files related to JetBrains IDEs
+.idea/
+*.sln.iml
+
+# Ignore other IDE-specific files
+*.code-workspace
+
+# Ignore application logs and error reporting
+*.log
+error.log
+debug.log
+npm-debug.log*
+
+# Ignore Razor compiler cache (for Razor views)
+.obj/
