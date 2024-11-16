@@ -17,6 +17,8 @@ namespace EnrollmentPortal.Models.Entities
 
         public string? Description { get; set; }  // Course Description
 
+        public string? Status { get; set; }
+
         // One-to-many relationship with StudentFile
         public ICollection<StudentFile>? StudentFiles { get; set; }
 

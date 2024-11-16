@@ -94,6 +94,11 @@ namespace EnrollmentPortal.Controllers
                 Selected = true
             });
             ViewData["SubjectFileId"] = subjectList;
+            Random random = new Random();
+            int randomNumber = random.Next(1000, 10000);
+            int currentCount = _context.SubjectSchedFiles.Count();
+            string edpCode = $"{randomNumber}{currentCount}";
+            ViewBag.EdpCodeGenerated = edpCode;
             return View();
         }
 

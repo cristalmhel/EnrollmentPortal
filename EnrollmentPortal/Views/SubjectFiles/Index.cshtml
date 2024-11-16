@@ -20,7 +20,7 @@
         </div>
         <div class="col-4">
             <div class="d-flex justify-content-end mb-3">
-                <a class="btn btn-primary px-2" asp-action="Create">Add Subject</a>
+                <a class="btn btn-success px-2" asp-action="Create"><i class="bi bi-plus-circle"></i> Add </a>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
 
 <table class="table d-none d-md-table table-shadow">
     <thead>
-        <tr>
+        <tr class="table-primary">
             <th>
                 Code
             </th>
@@ -81,9 +81,9 @@
                     @Html.DisplayFor(modelItem => item.Course.Code)
                 </td>
                 <td>
-                    <a class="btn btn-outline-dark px-2 mx-1" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a class="btn btn-outline-dark px-2 mx-1" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a class="btn btn-danger px-2 mx-1" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a class="btn btn-sm btn-success px-2 mx-1" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-fill"></i></a>
+                    <a class="btn btn-sm btn-secondary px-2 mx-1" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-list-columns"></i></a>
+                    @* <a class="btn btn-sm btn-danger px-2 mx-1" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3"></i></a> *@
                 </td>
             </tr>
         }
@@ -106,9 +106,9 @@
                     <strong>Course:</strong> @Html.DisplayFor(modelItem => item.Course.Code)
                 </p>
                 <div>
-                    <a class="btn btn-outline-dark px-2 mx-1" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a class="btn btn-outline-dark px-2 mx-1" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a class="btn btn-danger px-2 mx-1" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a class="btn btn-sm btn-success px-2 mx-1" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-fill"></i></a>
+                    <a class="btn btn-sm btn-secondary px-2 mx-1" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-list-columns"></i></a>
+                    @* <a class="btn btn-sm btn-danger px-2 mx-1" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash3"></i></a> *@
                 </div>
             </div>
         </div>

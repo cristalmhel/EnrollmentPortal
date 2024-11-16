@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnrollmentPortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240915070736_update student id")]
-    partial class updatestudentid
+    [Migration("20241104055546_add status course")]
+    partial class addstatuscourse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -45,6 +45,9 @@ namespace EnrollmentPortal.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -109,6 +112,7 @@ namespace EnrollmentPortal.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("ENRHFSTUDSTATUS")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -147,6 +151,7 @@ namespace EnrollmentPortal.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("STFSTUDMNAME")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -155,6 +160,7 @@ namespace EnrollmentPortal.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("STFSTUDSTATUS")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("STFSTUDYEAR")

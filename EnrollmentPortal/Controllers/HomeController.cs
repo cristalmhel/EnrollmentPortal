@@ -21,10 +21,10 @@ namespace EnrollmentPortal.Controllers
 
         public IActionResult Index()
         {
-            int courseCount = _context.Courses.Count();
-            int studentCount = _context.StudentFiles.Count();
-            int subjectCount = _context.SubjectFiles.Count();
-            int enrolledCount = _context.EnrollmentHeaderFiles.Count();
+            int courseCount = _context.Courses.Where(c => c.Status == "Active").Count();
+            int studentCount = _context.StudentFiles.Where(s => s.STFSTUDSTATUS == "Active").Count();
+            int subjectCount = _context.SubjectFiles.Where(s => s.SFSUBJSTATUS == "Active").Count();
+            int enrolledCount = _context.EnrollmentHeaderFiles.Where(s => s.ENRHFSTUDSTATUS == "Enrolled").Count();
 
             var homeViewModel = new HomeViewModel 
             {

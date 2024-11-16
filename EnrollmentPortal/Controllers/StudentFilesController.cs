@@ -75,7 +75,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            var courses = new SelectList(_context.Courses.AsNoTracking(), "Id", "Code");
+            var courses = new SelectList(_context.Courses.Where(c => c.Status == "Active").AsNoTracking(), "Id", "Code");
             var courseList = courses.ToList();
             courseList.Insert(0, new SelectListItem
             {
@@ -127,7 +127,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            var courses = new SelectList(_context.Courses, "Id", "Code", studentFile.CourseId);
+            var courses = new SelectList(_context.Courses.Where(c => c.Status == "Active"), "Id", "Code", studentFile.CourseId);
             var courseList = courses.ToList();
             courseList.Insert(0, new SelectListItem
             {
@@ -162,7 +162,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Code", studentFile.CourseId);
+            ViewData["CourseId"] = new SelectList(_context.Courses.Where(c => c.Status == "Active"), "Id", "Code", studentFile.CourseId);
             return View(studentFile);
         }
 
@@ -207,7 +207,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Code", studentFile.CourseId);
+            ViewData["CourseId"] = new SelectList(_context.Courses.Where(c => c.Status == "Active"), "Id", "Code", studentFile.CourseId);
             return View(studentFile);
         }
 

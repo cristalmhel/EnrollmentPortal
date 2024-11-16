@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EnrollmentPortal.Migrations
 {
     /// <inheritdoc />
-    public partial class SecondMigration : Migration
+    public partial class addstatuscourse : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,8 @@ namespace EnrollmentPortal.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -27,22 +28,40 @@ namespace EnrollmentPortal.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MiddleInitial = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StudentFiles",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    StudId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     STFSTUDLNAME = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     STFSTUDFNAME = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    STFSTUDMNAME = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    STFSTUDMNAME = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     STFSTUDYEAR = table.Column<int>(type: "int", nullable: false),
                     STFSTUDREMARKS = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    STFSTUDSTATUS = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    STFSTUDSTATUS = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentFiles", x => x.Id);
+                    table.PrimaryKey("PK_StudentFiles", x => x.StudId);
                     table.ForeignKey(
                         name: "FK_StudentFiles_Courses_CourseId",
                         column: x => x.CourseId,
@@ -89,7 +108,7 @@ namespace EnrollmentPortal.Migrations
                     ENRHFSTUDSEM = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     ENRHFSTUDENCODER = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ENRHFSTUDTOTALUNITS = table.Column<double>(type: "float", nullable: false),
-                    ENRHFSTUDSTATUS = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    ENRHFSTUDSTATUS = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StudentFileId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -99,7 +118,7 @@ namespace EnrollmentPortal.Migrations
                         name: "FK_EnrollmentHeaderFiles_StudentFiles_StudentFileId",
                         column: x => x.StudentFileId,
                         principalTable: "StudentFiles",
-                        principalColumn: "Id",
+                        principalColumn: "StudId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -260,6 +279,9 @@ namespace EnrollmentPortal.Migrations
 
             migrationBuilder.DropTable(
                 name: "SubjectPreqFiles");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "EnrollmentHeaderFiles");

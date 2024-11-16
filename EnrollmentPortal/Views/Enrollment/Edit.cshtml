@@ -10,7 +10,7 @@
             <h2>Edit Enrollment</h2>
         </div>
         <div class="card-body">
-            <form asp-action="Create">
+            <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="mb-3">
                     <h5>Student Info</h5>
@@ -125,7 +125,7 @@
                     <input asp-for="ENRHFSTUDTOTALUNITS" id="totalUnitsField" class="form-control" value="0" readonly />
                 </div>
                 <div class="form-group d-flex justify-content-end">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
             </form>
 
@@ -238,15 +238,55 @@
     $(document).ready(function () {
         var schedDataId = 1;
 
-        getStudentInfo();
+        // Deserialize JSON in JavaScript
+        const enrolledscheduleSubs = @Html.Raw(ViewData["EnrolledSchedulesJson"]);
+        if (enrolledscheduleSubs.$values) {
+            enrolledscheduleSubs.$values.forEach(s => {
+                var newRow = `
+                            <tr data-id="${schedDataId}">
+                                    <td>${s.edpCode}</td>
+                                    <td>${s.subjectCode}</td>
+                                    <td>${s.subjectUnits}</td>
+                                    <td>${s.startTime}</td>
+                                    <td>${s.endTime}</td>
+                                    <td>${s.days}</td>
+                                    <td>${s.room}</td>
+                                <td>
+                                        <input type="hidden" name="subjectScheduleIds[]" value="${s.scheduleId}" />
+                                        <input type="hidden" name="subjectIds[]" value="${s.subjectId}" />
+                                    <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                                </td>
+                            </tr>
+                        `;
 
-        $('#studentSelect').select2({
-            placeholder: "Search student ID",
-            allowClear: false,
-            theme: "bootstrap-5",
-            containerCssClass: "select2--small",
-            dropdownCssClass: "select2--small",
-        });
+                // Append the new row to the schedule table
+                $('#scheduleTable tbody').append(newRow);
+
+                var cardNewRow = `
+                            <div class="card card-box-shadow mb-3" data-id="${schedDataId}">
+                                <div class="card-body">
+                                        <h5 class="card-title">EDP Code: ${s.edpCode} </h5>
+                                    <p class="card-text">
+                                            <strong> Subject Code:</strong> ${s.subjectCode} <br>
+                                            <strong> Units:</strong> ${s.subjectUnits} <br>
+                                            <strong>Start Time:</strong> ${s.startTime} <br>
+                                            <strong>End Time:</strong> ${s.endTime} <br>
+                                            <strong>Days:</strong> ${s.days} <br>
+                                            <strong>Room:</strong> ${s.room}
+                                    </p>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                $('#scheduleCard').append(cardNewRow);
+                schedDataId++;
+
+                $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(s.subjectUnits));
+            });
+        }
 
         $('#addScheduleModal').on('shown.bs.modal', function () {
             $('#searchEdpSelected').select2({
@@ -432,44 +472,6 @@
             $('#searchEdpSelected').val('');
             $('#edpModalError').text('');
             $('#addScheduleBtn').prop('disabled', true);
-        }
-
-        // Handle Stdent Id dropdown change event
-        $('#studentSelect').change(function () {
-            getStudentInfo();
-        });
-
-        function getStudentInfo() {
-            var studentId = $('#studentSelect').val();
-
-            if (studentId) {
-                // Make AJAX request to get subjects details
-                //console.log(subjectId);
-                $.ajax({
-                    url: '@Url.Action("GetStudent", "Enrollment")', // URL to the controller action
-                    type: 'GET',
-                    data: { Id: studentId }, // Send the selected student's Id
-                    success: function (data) {
-                        console.log(data);
-                        // Populate the fields with the returned data
-                        $('#studFname').val(data.stfstudfname);
-                        $('#studMname').val(data.stfstudmname);
-                        $('#studLname').val(data.stfstudlname);
-                        $('#studStatus').val(data.stfstudstatus);
-                        $('#studCourse').val(data.course.code);
-                    },
-                    error: function () {
-                        alert("Error retrieving subject data.");
-                    }
-                });
-            } else {
-                // Clear the fields if no student is selected
-                $('#studFname').val('');
-                $('#studMname').val('');
-                $('#studLname').val('');
-                $('#studStatus').val('');
-                $('#studCourse').val('');
-            }
         }
 
         // Clear the modal data

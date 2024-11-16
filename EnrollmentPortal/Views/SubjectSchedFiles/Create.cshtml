@@ -4,6 +4,10 @@
     ViewData["Title"] = "Add Schedule";
 }
 
+@{
+    var edpCodeGenerated = ViewBag.EdpCodeGenerated as string;
+}
+
 <div>
     <div class="card card-box-shadow">
         <div class="card-header">
@@ -30,7 +34,7 @@
                 <div class="row mb-3">
                     <div class="form-group col-sm">
                         <label asp-for="SSFEDPCODE" class="control-label">EDP Code</label>
-                        <input asp-for="SSFEDPCODE" class="form-control" />
+                        <input asp-for="SSFEDPCODE" class="form-control" value="@edpCodeGenerated" readonly />
                         <span asp-validation-for="SSFEDPCODE" class="text-danger"></span>
                     </div>
                     <div class="form-group col-sm">

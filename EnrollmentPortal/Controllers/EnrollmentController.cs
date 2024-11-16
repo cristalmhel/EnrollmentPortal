@@ -55,13 +55,52 @@ namespace EnrollmentPortal.Controllers
             }
 
             var enrollmentHeaderFile = await _context.EnrollmentHeaderFiles
-                .Include(e => e.StudentFile)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(s => s.StudentFile)
+                .ThenInclude(student => student.Course)
+                .Include(e => e.EnrollmentDetailFiles)
+                .SingleOrDefaultAsync(s => s.Id == id);
             if (enrollmentHeaderFile == null)
             {
                 return NotFound();
             }
 
+            if (enrollmentHeaderFile.EnrollmentDetailFiles != null)
+            {
+                List<ScheduleViewModel> enrolledSchedules = new List<ScheduleViewModel>();
+
+                foreach (var detail in enrollmentHeaderFile.EnrollmentDetailFiles)
+                {
+                    var sched = await _context.SubjectSchedFiles.Include(s => s.SubjectFile).FirstOrDefaultAsync(sf => sf.Id == detail.SubjectSchedFileId);
+
+                    enrolledSchedules.Add(new ScheduleViewModel
+                    {
+                        scheduleId = sched.Id,
+                        subjectId = sched.SubjectFile.Id,
+                        edpCode = sched.SSFEDPCODE,
+                        subjectCode = sched.SubjectFile.SFSUBJCODE,
+                        subjectUnits = sched.SubjectFile.SFSUBJUNITS,
+                        startTime = sched.SSFSTARTTIME,
+                        endTime = sched.SSFENDTIME,
+                        ampm = sched.SSFXM,
+                        days = sched.SSFDAYS,
+                        room = sched.SSFROOM,
+                        maxSize = sched.SSFMAXSIZE,
+                        classSize = sched.SSFCLASSSIZE
+                    });
+                }
+
+                // Configure JSON serialization options to handle references
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true
+                };
+
+                var schedulesJson = JsonSerializer.Serialize(enrolledSchedules, options);
+
+                // Store serialized JSON in ViewData
+                ViewData["EnrolledSchedulesJson"] = schedulesJson;
+            }
             return View(enrollmentHeaderFile);
         }
 
@@ -106,7 +145,7 @@ namespace EnrollmentPortal.Controllers
             });
             ViewData["StudentFileId"] = studentsList;
 
-            var edps = new SelectList(_context.SubjectSchedFiles.AsNoTracking(), "Id", "SSFEDPCODE");
+            var edps = new SelectList(_context.SubjectSchedFiles.Where(s => s.SSFSTATUS == "Active").AsNoTracking(), "Id", "SSFEDPCODE");
             var edpsList = edps.ToList();
             edpsList.Insert(0, new SelectListItem
             {
@@ -183,7 +222,7 @@ namespace EnrollmentPortal.Controllers
             };
             ViewData["StatusOptions"] = statusOptions;
 
-            var students = new SelectList(_context.StudentFiles.AsNoTracking(), "StudId", "StudId", enrollmentHeaderFile.StudentFileId);
+            var students = new SelectList(_context.StudentFiles.Where(s => s.STFSTUDSTATUS == "Active").AsNoTracking(), "StudId", "StudId", enrollmentHeaderFile.StudentFileId);
             var studentsList = students.ToList();
             studentsList.Insert(0, new SelectListItem
             {
@@ -194,7 +233,7 @@ namespace EnrollmentPortal.Controllers
             });
             ViewData["StudentFileId"] = studentsList;
 
-            var edps = new SelectList(_context.SubjectSchedFiles.AsNoTracking(), "Id", "SSFEDPCODE");
+            var edps = new SelectList(_context.SubjectSchedFiles.Where(s => s.SSFSTATUS == "Active").AsNoTracking(), "Id", "SSFEDPCODE");
             var edpsList = edps.ToList();
             edpsList.Insert(0, new SelectListItem
             {
@@ -243,7 +282,7 @@ namespace EnrollmentPortal.Controllers
             };
             ViewData["StatusOptions"] = statusOptions;
 
-            var edps = new SelectList(_context.SubjectSchedFiles.AsNoTracking(), "Id", "SSFEDPCODE");
+            var edps = new SelectList(_context.SubjectSchedFiles.Where(s => s.SSFSTATUS == "Active").AsNoTracking(), "Id", "SSFEDPCODE");
             var edpsList = edps.ToList();
             edpsList.Insert(0, new SelectListItem
             {
@@ -394,7 +433,7 @@ namespace EnrollmentPortal.Controllers
             };
             ViewData["StatusOptions"] = statusOptions;
 
-            var edps = new SelectList(_context.SubjectSchedFiles.AsNoTracking(), "Id", "SSFEDPCODE");
+            var edps = new SelectList(_context.SubjectSchedFiles.Where(s => s.SSFSTATUS == "Active").AsNoTracking(), "Id", "SSFEDPCODE");
             var edpsList = edps.ToList();
             edpsList.Insert(0, new SelectListItem
             {
@@ -417,11 +456,51 @@ namespace EnrollmentPortal.Controllers
             }
 
             var enrollmentHeaderFile = await _context.EnrollmentHeaderFiles
-                .Include(e => e.StudentFile)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(s => s.StudentFile)
+                .ThenInclude(student => student.Course)
+                .Include(e => e.EnrollmentDetailFiles)
+                .SingleOrDefaultAsync(s => s.Id == id);
             if (enrollmentHeaderFile == null)
             {
                 return NotFound();
+            }
+
+            if (enrollmentHeaderFile.EnrollmentDetailFiles != null)
+            {
+                List<ScheduleViewModel> enrolledSchedules = new List<ScheduleViewModel>();
+
+                foreach (var detail in enrollmentHeaderFile.EnrollmentDetailFiles)
+                {
+                    var sched = await _context.SubjectSchedFiles.Include(s => s.SubjectFile).FirstOrDefaultAsync(sf => sf.Id == detail.SubjectSchedFileId);
+
+                    enrolledSchedules.Add(new ScheduleViewModel
+                    {
+                        scheduleId = sched.Id,
+                        subjectId = sched.SubjectFile.Id,
+                        edpCode = sched.SSFEDPCODE,
+                        subjectCode = sched.SubjectFile.SFSUBJCODE,
+                        subjectUnits = sched.SubjectFile.SFSUBJUNITS,
+                        startTime = sched.SSFSTARTTIME,
+                        endTime = sched.SSFENDTIME,
+                        ampm = sched.SSFXM,
+                        days = sched.SSFDAYS,
+                        room = sched.SSFROOM,
+                        maxSize = sched.SSFMAXSIZE,
+                        classSize = sched.SSFCLASSSIZE
+                    });
+                }
+
+                // Configure JSON serialization options to handle references
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    WriteIndented = true
+                };
+
+                var schedulesJson = JsonSerializer.Serialize(enrolledSchedules, options);
+
+                // Store serialized JSON in ViewData
+                ViewData["EnrolledSchedulesJson"] = schedulesJson;
             }
 
             return View(enrollmentHeaderFile);

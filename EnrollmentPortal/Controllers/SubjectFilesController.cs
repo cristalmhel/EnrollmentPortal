@@ -132,7 +132,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            var courses = new SelectList(_context.Courses.AsNoTracking(), "Id", "Code");
+            var courses = new SelectList(_context.Courses.Where(c => c.Status == "Active").AsNoTracking(), "Id", "Code");
             var courseList = courses.ToList();
             courseList.Insert(0, new SelectListItem
             {
@@ -215,7 +215,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            var courses = new SelectList(_context.Courses, "Id", "Code", subjectFile.CourseId);
+            var courses = new SelectList(_context.Courses.Where(c => c.Status == "Active"), "Id", "Code", subjectFile.CourseId);
             var courseList = courses.ToList();
             courseList.Insert(0, new SelectListItem
             {
@@ -264,7 +264,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            var courses = new SelectList(_context.Courses.AsNoTracking(), "Id", "Code");
+            var courses = new SelectList(_context.Courses.Where(c => c.Status == "Active").AsNoTracking(), "Id", "Code");
             var courseList = courses.ToList();
             courseList.Insert(0, new SelectListItem
             {
@@ -414,7 +414,7 @@ namespace EnrollmentPortal.Controllers
 
             ViewData["StatusOptions"] = statusOptions;
 
-            var courses = new SelectList(_context.Courses, "Id", "Code", subjectFile.CourseId);
+            var courses = new SelectList(_context.Courses.Where(c => c.Status == "Active"), "Id", "Code", subjectFile.CourseId);
             var courseList = courses.ToList();
             courseList.Insert(0, new SelectListItem
             {
@@ -489,7 +489,7 @@ namespace EnrollmentPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Find related requisite entries in the SubjectPreqFile table
+            /*// Find related requisite entries in the SubjectPreqFile table
             var relatedRequisites = await _context.SubjectPreqFiles
                 .Where(sp => sp.SubjectFileId == id)
                 .ToListAsync();
@@ -498,7 +498,7 @@ namespace EnrollmentPortal.Controllers
             if (relatedRequisites.Any())
             {
                 _context.SubjectPreqFiles.RemoveRange(relatedRequisites);
-            }
+            }*/
 
 
             var subjectFile = await _context.SubjectFiles.FindAsync(id);

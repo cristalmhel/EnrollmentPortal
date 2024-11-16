@@ -67,6 +67,14 @@ namespace EnrollmentPortal.Controllers
         // GET: Courses/Create
         public IActionResult Create()
         {
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "Active", Value = "Active" },
+                new SelectListItem { Text = "Inactive", Value = "Inactive" }
+            };
+
+            ViewData["StatusOptions"] = statusOptions;
             return View();
         }
 
@@ -75,7 +83,7 @@ namespace EnrollmentPortal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,Description")] Course course)
+        public async Task<IActionResult> Create([Bind("Id,Code,Name,Description,Status")] Course course)
         {
             // Check if a course with the same Code already exists
             if (_context.Courses.Any(c => c.Code == course.Code))
@@ -92,6 +100,14 @@ namespace EnrollmentPortal.Controllers
             }
 
             // If we reached here, something went wrong, so re-display the form with the error message
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = (course.Status == null) },
+                new SelectListItem { Text = "Active", Value = "Active", Selected = (course.Status == "Active") },
+                new SelectListItem { Text = "Inactive", Value = "Inactive", Selected = (course.Status == "Inactive") }
+            };
+
+            ViewData["StatusOptions"] = statusOptions;
             return View(course);
         }
 
@@ -102,7 +118,13 @@ namespace EnrollmentPortal.Controllers
             {
                 return NotFound();
             }
-
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = true },
+                new SelectListItem { Text = "Active", Value = "Active" },
+                new SelectListItem { Text = "Inactive", Value = "Inactive" }
+            };
+            ViewData["StatusOptions"] = statusOptions;
             var course = await _context.Courses.FindAsync(id);
             if (course == null)
             {
@@ -116,7 +138,7 @@ namespace EnrollmentPortal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,Description")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,Description,Status")] Course course)
         {
             if (id != course.Id)
             {
@@ -150,6 +172,14 @@ namespace EnrollmentPortal.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            var statusOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select status", Value = "", Disabled = true, Selected = (course.Status == null) },
+                new SelectListItem { Text = "Active", Value = "Active", Selected = (course.Status == "Active") },
+                new SelectListItem { Text = "Inactive", Value = "Inactive", Selected = (course.Status == "Inactive") }
+            };
+
+            ViewData["StatusOptions"] = statusOptions;
             return View(course);
         }
 

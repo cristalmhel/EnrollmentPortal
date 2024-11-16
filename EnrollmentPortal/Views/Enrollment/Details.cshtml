@@ -1,60 +1,171 @@
 ﻿@model EnrollmentPortal.Models.Entities.EnrollmentHeaderFile
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Enrollment Detail";
 }
 
-<h1>Details</h1>
+<div>
+    <div class="card card-box-shadow">
+        <div class="card-header">
+            <h2>Enrollment Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <h5>Student Info</h5>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label asp-for="StudentFileId" class="control-label"> Student Id </label>
+                    <input asp-for="StudentFileId" class="form-control" disabled />
+                </div>
+                <div class="form-group col-sm">
+                </div>
+                <div class=" form-group col-sm">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label class="control-label">First Name</label>
+                    <input asp-for="StudentFile.STFSTUDFNAME" class="form-control" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label class="control-label">Middle Name</label>
+                    <input asp-for="StudentFile.STFSTUDMNAME" class=" form-control" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label class="control-label">Last Name</label>
+                    <input asp-for="StudentFile.STFSTUDLNAME" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label class="control-label">Status</label>
+                    <input asp-for="StudentFile.STFSTUDSTATUS" class="form-control" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label class="control-label">Course</label>
+                    <input asp-for="StudentFile.Course.Code" class="form-control" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label asp-for="ENRHFSTUDSEM" class="control-label">Semester</label>
+                    <input asp-for="ENRHFSTUDSEM" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="form-group col-sm">
+                    <label asp-for="ENRHFSTUDDATEENROLL" class="control-label">Date Enroll</label>
+                    <input asp-for="ENRHFSTUDDATEENROLL" type="date" class="form-control" disabled/>
+                </div>
+                <div class=" form-group col-sm">
+                    <label asp-for="ENRHFSTUDSCHLYR" class="control-label">School Year</label>
+                    <input asp-for="ENRHFSTUDSCHLYR" class="form-control" disabled />
+                </div>
+                <div class=" form-group col-sm">
+                    <label asp-for="ENRHFSTUDSTATUS" class="control-label">Status</label>
+                    <input asp-for="ENRHFSTUDSTATUS" class="form-control" disabled />
+                </div>
+            </div>
+            <div class="mb-3 mt-2">
+                <h5>Schedules</h5>
+            </div>
+            <div class="mb-3">
+                <table class="table d-none d-md-table table-shadow" id="scheduleTable">
+                    <thead>
+                        <tr class="table-primary">
+                            <th>
+                                EDP Code
+                            </th>
+                            <th>
+                                Subject Code
+                            </th>
+                            <th>
+                                Units
+                            </th>
+                            <th>
+                                Start Time
+                            </th>
+                            <th>
+                                End Time
+                            </th>
+                            <th>
+                                Days
+                            </th>
+                            <th>
+                                Room
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be added here dynamically -->
+                    </tbody>
+                </table>
 
-<div>
-    <h4>EnrollmentHeaderFile</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ENRHFSTUDDATEENROLL)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ENRHFSTUDDATEENROLL)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ENRHFSTUDSCHLYR)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ENRHFSTUDSCHLYR)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ENRHFSTUDSEM)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ENRHFSTUDSEM)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ENRHFSTUDENCODER)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ENRHFSTUDENCODER)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ENRHFSTUDTOTALUNITS)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ENRHFSTUDTOTALUNITS)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ENRHFSTUDSTATUS)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ENRHFSTUDSTATUS)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentFile)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentFile.STFSTUDFNAME)
-        </dd>
-    </dl>
+                <!-- Card Layout for Mobile -->
+                <div class="d-md-none" id="scheduleCard">
+                </div>
+            </div>
+            <div class="mb-3 w-25 w-md-50">
+                <label asp-for="ENRHFSTUDTOTALUNITS" class="control-label"> Total Units</label>
+                <input asp-for="ENRHFSTUDTOTALUNITS" id="totalUnitsField" class="form-control" value="0" disabled />
+            </div>
+            <div>
+                <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                <a class="btn btn-outline-dark mx-3" asp-action="Index"> &#10502; Back</a>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        // Deserialize JSON in JavaScript
+        const enrolledscheduleSubs = @Html.Raw(ViewData["EnrolledSchedulesJson"]);
+        if (enrolledscheduleSubs.$values) {
+            enrolledscheduleSubs.$values.forEach(s => {
+                var newRow = `
+                                <tr>
+                                        <td>${s.edpCode}</td>
+                                        <td>${s.subjectCode}</td>
+                                        <td>${s.subjectUnits}</td>
+                                        <td>${s.startTime}</td>
+                                        <td>${s.endTime}</td>
+                                        <td>${s.days}</td>
+                                        <td>${s.room}</td>
+                                </tr>
+                            `;
+
+                // Append the new row to the schedule table
+                $('#scheduleTable tbody').append(newRow);
+
+                var cardNewRow = `
+                                <div class="card card-box-shadow mb-3">
+                                    <div class="card-body">
+                                            <h5 class="card-title">EDP Code: ${s.edpCode} </h5>
+                                        <p class="card-text">
+                                                <strong> Subject Code:</strong> ${s.subjectCode} <br>
+                                                <strong> Units:</strong> ${s.subjectUnits} <br>
+                                                <strong>Start Time:</strong> ${s.startTime} <br>
+                                                <strong>End Time:</strong> ${s.endTime} <br>
+                                                <strong>Days:</strong> ${s.days} <br>
+                                                <strong>Room:</strong> ${s.room}
+                                        </p>
+                                    </div>
+                                </div>
+                            `;
+
+                $('#scheduleCard').append(cardNewRow);
+
+                $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(s.subjectUnits));
+            });
+        }
+    });
+</script>
