@@ -14,5 +14,6 @@
         public string room { get; set; } = string.Empty;
         public int? maxSize { get; set; } = 0;
         public int? classSize { get; set; } = 0;
+        public string status { get; set; } = string.Empty;
     }
 }

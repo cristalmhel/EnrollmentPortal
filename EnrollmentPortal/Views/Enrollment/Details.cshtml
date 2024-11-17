@@ -93,6 +93,9 @@
                             <th>
                                 Room
                             </th>
+                            <th>
+                                Status
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,10 +139,11 @@
                                         <td>${s.edpCode}</td>
                                         <td>${s.subjectCode}</td>
                                         <td>${s.subjectUnits}</td>
-                                        <td>${s.startTime}</td>
-                                        <td>${s.endTime}</td>
+                                        <td>${formatISOTimeTo12Hour(s.startTime)}</td>
+                                        <td>${formatISOTimeTo12Hour(s.endTime)}</td>
                                         <td>${s.days}</td>
                                         <td>${s.room}</td>
+                                        <td>${s.status}</td>
                                 </tr>
                             `;
 
@@ -153,19 +157,42 @@
                                         <p class="card-text">
                                                 <strong> Subject Code:</strong> ${s.subjectCode} <br>
                                                 <strong> Units:</strong> ${s.subjectUnits} <br>
-                                                <strong>Start Time:</strong> ${s.startTime} <br>
-                                                <strong>End Time:</strong> ${s.endTime} <br>
+                                                <strong>Start Time:</strong> ${formatISOTimeTo12Hour(s.startTime)} <br>
+                                                <strong>End Time:</strong> ${formatISOTimeTo12Hour(s.endTime)} <br>
                                                 <strong>Days:</strong> ${s.days} <br>
                                                 <strong>Room:</strong> ${s.room}
+                                                <strong>Room:</strong> ${s.status}
                                         </p>
                                     </div>
                                 </div>
                             `;
 
                 $('#scheduleCard').append(cardNewRow);
-
-                $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(s.subjectUnits));
+                if (s.status === "Active") { 
+                    $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(s.subjectUnits));
+                }
             });
+        }
+
+        function formatISOTimeTo12Hour(isoDateTime) {
+            // Parse the ISO 8601 string into a Date object
+            const date = new Date(isoDateTime);
+
+            // Extract hours and minutes
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+
+            // Determine AM/PM
+            const period = hours >= 12 ? "pm" : "am";
+
+            // Format hours into 12-hour format
+            const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
+
+            // Format minutes with leading zero if needed
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+
+            // Return formatted time as "hh:mm tt"
+            return `${formattedHours}:${formattedMinutes} ${period}`;
         }
     });
 </script>

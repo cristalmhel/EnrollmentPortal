@@ -13,6 +13,7 @@ using System.Security.Claims;
 using EnrollmentPortal.Models.ViewModel;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EnrollmentPortal.Controllers
 {
@@ -85,7 +86,8 @@ namespace EnrollmentPortal.Controllers
                         days = sched.SSFDAYS,
                         room = sched.SSFROOM,
                         maxSize = sched.SSFMAXSIZE,
-                        classSize = sched.SSFCLASSSIZE
+                        classSize = sched.SSFCLASSSIZE,
+                        status = detail.ENRDFSTUDSTATUS
                     });
                 }
 
@@ -165,6 +167,16 @@ namespace EnrollmentPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ENRHFSTUDDATEENROLL,ENRHFSTUDSCHLYR,ENRHFSTUDSEM,ENRHFSTUDENCODER,ENRHFSTUDTOTALUNITS,ENRHFSTUDSTATUS,StudentFileId")] EnrollmentHeaderFile enrollmentHeaderFile, int[] subjectScheduleIds, int[] subjectIds)
         {
+            // Check if the students if not yet enrolled base in the semester and school year
+            if (_context.EnrollmentHeaderFiles.Any(
+                c => c.StudentFileId == enrollmentHeaderFile.StudentFileId &&
+                c.ENRHFSTUDSCHLYR == enrollmentHeaderFile.ENRHFSTUDSCHLYR &&
+                c.ENRHFSTUDSEM == enrollmentHeaderFile.ENRHFSTUDSEM
+            ))
+            {
+                ModelState.AddModelError("StudentFileId", "This student is already enrolled this semester!");
+            }
+
             if (ModelState.IsValid && (subjectScheduleIds != null && subjectScheduleIds.Length > 0))
             {
                 enrollmentHeaderFile.ENRHFSTUDENCODER = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -183,6 +195,19 @@ namespace EnrollmentPortal.Controllers
                         ENRDFSTUDSTATUS = "Active"
                     };
                     enrollmentHeaderFile.EnrollmentDetailFiles.Add(schedule);
+
+                    // Retrieve the schedule record from the database
+                    var scheduleToUpdate = await _context.SubjectSchedFiles
+                                                         .SingleOrDefaultAsync(s => s.Id == subjectScheduleIds[i]);
+
+                    if (scheduleToUpdate != null)
+                    {
+                        // Increment the ClassSize by 1
+                        scheduleToUpdate.SSFCLASSSIZE += 1;
+
+                        // Save the updated ClassSize back to the database
+                        _context.SubjectSchedFiles.Update(scheduleToUpdate); // Optional: EF will track changes automatically.
+                    }
                 }
 
                 // Add and save the EnrollmentDetailFiles (if any)
@@ -324,7 +349,8 @@ namespace EnrollmentPortal.Controllers
                         days = sched.SSFDAYS,
                         room  = sched.SSFROOM,
                         maxSize = sched.SSFMAXSIZE,
-                        classSize = sched.SSFCLASSSIZE
+                        classSize = sched.SSFCLASSSIZE,
+                        status = detail.ENRDFSTUDSTATUS
                     });
                 }
 
@@ -348,7 +374,7 @@ namespace EnrollmentPortal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ENRHFSTUDDATEENROLL,ENRHFSTUDSCHLYR,ENRHFSTUDSEM,ENRHFSTUDENCODER,ENRHFSTUDTOTALUNITS,ENRHFSTUDSTATUS,StudentFileId")] EnrollmentHeaderFile enrollmentHeaderFile, int[] subjectScheduleIds, int[] subjectIds)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ENRHFSTUDDATEENROLL,ENRHFSTUDSCHLYR,ENRHFSTUDSEM,ENRHFSTUDENCODER,ENRHFSTUDTOTALUNITS,ENRHFSTUDSTATUS,StudentFileId")] EnrollmentHeaderFile enrollmentHeaderFile, int[] subjectScheduleIds, int[] subjectIds, string[] statuses, int[] origScheduleIds, string[] origStatuses)
         {
             if (id != enrollmentHeaderFile.Id)
             {
@@ -383,13 +409,74 @@ namespace EnrollmentPortal.Controllers
                             EnrollmentHeaderFileId = enrollmentHeaderFile.Id,
                             SubjectFileId = subjectIds[i],
                             SubjectSchedFileId = subjectScheduleIds[i],
-                            ENRDFSTUDSTATUS = "Active"
+                            ENRDFSTUDSTATUS = statuses[i],
                         };
                         enrollmentHeaderFile.EnrollmentDetailFiles.Add(schedule);
                     }
 
                     // Add and save the EnrollmentDetailFiles (if any)
                     _context.EnrollmentDetailFiles.AddRange(enrollmentHeaderFile.EnrollmentDetailFiles);
+
+                    // Update the Class size of the Subject Schedule / EDP
+                    for (int i = 0; i < subjectScheduleIds.Length; i++)
+                    {
+                        for (int j = 0; j < origScheduleIds.Length; j++)
+                        {
+                            if (subjectScheduleIds[i] == origScheduleIds[j] && statuses[i] != origStatuses[j])
+                            {
+                                var scheduleToUpdate = await _context.SubjectSchedFiles
+                                    .SingleOrDefaultAsync(s => s.Id == subjectScheduleIds[i]);
+                                if (scheduleToUpdate != null)
+                                {
+                                    if (statuses[i] == "Active" && (origStatuses[i] == "Cancelled" || origStatuses[i] == "Withdrawn"))
+                                    {
+                                        scheduleToUpdate.SSFCLASSSIZE += 1;
+                                    }
+                                    else if (origStatuses[i] == "Active" && (statuses[i] == "Cancelled" || statuses[i] == "Withdrawn"))
+                                    {
+                                        if (scheduleToUpdate.SSFCLASSSIZE <= 0)
+                                        {
+                                            scheduleToUpdate.SSFCLASSSIZE = 0;
+                                        }
+                                        else
+                                        {
+                                            scheduleToUpdate.SSFCLASSSIZE -= 1;
+                                        }
+                                    }
+                                    Console.WriteLine($"Value: {statuses[i]}");
+                                    // Save the updated ClassSize back to the database
+                                    _context.SubjectSchedFiles.Update(scheduleToUpdate); // Optional: EF will track changes automatically.
+                                }
+                            }
+                        }
+                    }
+
+                    var newSchedIds = subjectScheduleIds
+                        .Select((value, index) => new { Id = value, Index = index })
+                        .Where(x => !origScheduleIds.Contains(x.Id));
+
+                    if (newSchedIds.Any())
+                    {
+                        foreach (var sched in newSchedIds)
+                        {
+                            var scheduleToUpdate = await _context.SubjectSchedFiles
+                                .SingleOrDefaultAsync(s => s.Id == sched.Id);
+
+                            int i = sched.Index;
+
+                            if (scheduleToUpdate != null)
+                            {
+                                if (statuses[i] == "Active")
+                                {
+                                    scheduleToUpdate.SSFCLASSSIZE += 1;
+                                }
+                                
+                                // Save the updated ClassSize back to the database
+                                _context.SubjectSchedFiles.Update(scheduleToUpdate); // Optional: EF will track changes automatically.
+                            }
+                        }
+                    }
+
                     await _context.SaveChangesAsync();  // Second save
                 }
                 catch (DbUpdateConcurrencyException)

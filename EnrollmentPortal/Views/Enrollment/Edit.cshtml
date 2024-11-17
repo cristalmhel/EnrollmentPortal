@@ -107,6 +107,9 @@
                                     Room
                                 </th>
                                 <th>
+                                    Status
+                                </th>
+                                <th>
                                     Action
                                 </th>
                             </tr>
@@ -247,14 +250,22 @@
                                     <td>${s.edpCode}</td>
                                     <td>${s.subjectCode}</td>
                                     <td>${s.subjectUnits}</td>
-                                    <td>${s.startTime}</td>
-                                    <td>${s.endTime}</td>
+                                    <td>${formatISOTimeTo12Hour(s.startTime)}</td>
+                                    <td>${formatISOTimeTo12Hour(s.endTime)}</td>
                                     <td>${s.days}</td>
                                     <td>${s.room}</td>
+                                    <td class="status-column" >${s.status}</td>
                                 <td>
-                                        <input type="hidden" name="subjectScheduleIds[]" value="${s.scheduleId}" />
-                                        <input type="hidden" name="subjectIds[]" value="${s.subjectId}" />
-                                    <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                                    <input type="hidden" name="subjectScheduleIds[]" value="${s.scheduleId}" />
+                                        <input type="hidden" name="origScheduleIds[]" value="${s.scheduleId}" />
+                                    <input type="hidden" name="subjectIds[]" value="${s.subjectId}" />
+                                    <input type="hidden" name="statuses[]" value="${s.status}" class="status-input" />
+                                        <input type="hidden" name="origStatuses[]" value="${s.status}" />
+                                    <div class="btn-group">
+                                        <button type="button" title="Active" class="btn btn-success btn-sm status-btn" data-status="Active"><i class="bi bi-check-circle-fill"></i></button>
+                                        <button type="button" title="Cancelled" class="btn btn-warning btn-sm status-btn" data-status="Cancelled"><i class="bi bi-x-circle-fill"></i></button>
+                                        <button type="button" title="Withdrawn" class="btn btn-danger btn-sm status-btn" data-status="Withdrawn"><i class="bi bi-terminal-x"></i></button>
+                                    </div>
                                 </td>
                             </tr>
                         `;
@@ -269,22 +280,30 @@
                                     <p class="card-text">
                                             <strong> Subject Code:</strong> ${s.subjectCode} <br>
                                             <strong> Units:</strong> ${s.subjectUnits} <br>
-                                            <strong>Start Time:</strong> ${s.startTime} <br>
-                                            <strong>End Time:</strong> ${s.endTime} <br>
+                                            <strong>Start Time:</strong> ${formatISOTimeTo12Hour(s.startTime)} <br>
+                                            <strong>End Time:</strong> ${formatISOTimeTo12Hour(s.endTime)} <br>
                                             <strong>Days:</strong> ${s.days} <br>
-                                            <strong>Room:</strong> ${s.room}
+                                            <strong>Room:</strong> ${s.room} <br>
+                                            <strong>Status: ${s.status}</strong>
                                     </p>
                                     <div>
-                                        <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                                        <div class="btn-group">
+                                            <button type="button" title="Active" class="btn btn-success btn-sm status-btn" data-status="Active"><i class="bi bi-check-circle-fill"></i></button>
+                                            <button type="button" title="Cancelled" class="btn btn-warning btn-sm status-btn" data-status="Cancelled"><i class="bi bi-x-circle-fill"></i></button>
+                                            <button type="button" title="Withdrawn" class="btn btn-danger btn-sm status-btn" data-status="Withdrawn"><i class="bi bi-terminal-x"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         `;
 
                 $('#scheduleCard').append(cardNewRow);
+                // disableStatusButton(schedDataId);
                 schedDataId++;
 
-                $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(s.subjectUnits));
+                if (s.status === "Active") {
+                    $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(s.subjectUnits));
+                }
             });
         }
 
@@ -381,8 +400,8 @@
             var endTime = $('#endTimeField').text();
             var ampm = $('#ampmField').text();
             var schedDays = $('#daysField').text();
-            var classSize = $('#classSizeField').text();
-            var maxSize = $('#maxSizeField').text();
+            var classSize = parseInt($('#classSizeField').text().trim(), 10);
+            var maxSize = parseInt($('#maxSizeField').text().trim(), 10);
             var room = $('#roomField').text();
 
             var subjectSchedId = $('#subjectSchedFileId').val();
@@ -399,6 +418,17 @@
                 return;
             }
 
+            // Validate schedule conflict
+            if (checkScheduleConflict(startTime, endTime, splitSchedDays(schedDays))) {
+                $('#edpModalError').text('Conflict detected! Please find other schedule.');
+                return; // Prevent adding the new row
+            }
+
+            if (!isNaN(classSize) && !isNaN(maxSize) && classSize >= maxSize) {
+                $('#edpModalError').text('This Schedule is full!');
+                return; // Prevent adding the new row
+            }
+
             // Check if the required fields are populated
             if (subjectSchedId !== '' && subjectId !== '') {
                 // Create a new row to append to the requisite table
@@ -411,10 +441,16 @@
                             <td>${endTime}</td>
                             <td>${schedDays}</td>
                             <td>${room}</td>
+                            <td class="status-column">Active</td>
                             <td>
                                 <input type="hidden" name="subjectScheduleIds[]" value="${subjectSchedId}" />
                                 <input type="hidden" name="subjectIds[]" value="${subjectId}" />
-                                <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                                <input type="hidden" name="statuses[]" value="Active" class="status-input" />
+                                <div class="btn-group">
+                                    <button type="button" title="Active" class="btn btn-success btn-sm status-btn" data-status="Active"><i class="bi bi-check-circle-fill"></i></button>
+                                    <button type="button" title="Cancelled" class="btn btn-warning btn-sm status-btn" data-status="Cancelled"><i class="bi bi-x-circle-fill"></i></button>
+                                    <button type="button" title="Withdrawn" class="btn btn-danger btn-sm status-btn" data-status="Withdrawn"><i class="bi bi-terminal-x"></i></button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -433,15 +469,21 @@
                                     <strong>End Time:</strong> ${endTime} <br>
                                     <strong>Days:</strong> ${schedDays} <br>
                                     <strong>Room:</strong> ${room}
+                                    <strong>Status: Active</strong>
                                 </p>
                                 <div>
-                                    <button type="button" class="btn btn-sm btn-danger remove-schedule-btn"><i class="bi bi-trash3"></i></button>
+                                    <div class="btn-group">
+                                        <button type="button" title="Active" class="btn btn-success btn-sm status-btn" data-status="Active"><i class="bi bi-check-circle-fill"></i></button>
+                                        <button type="button" title="Cancelled" class="btn btn-warning btn-sm status-btn" data-status="Cancelled"><i class="bi bi-x-circle-fill"></i></button>
+                                        <button type="button" title="Withdrawn" class="btn btn-danger btn-sm status-btn" data-status="Withdrawn"><i class="bi bi-terminal-x"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     `;
 
                 $('#scheduleCard').append(cardNewRow);
+                // disableStatusButton(schedDataId);
                 schedDataId++;
 
                 $('#totalUnitsField').val(parseInt($('#totalUnitsField').val() || 0) + parseInt(subUnits));
@@ -502,6 +544,177 @@
             $('tr[data-id="' + dataId + '"]').remove(); // Remove the row from the table
             $('.card[data-id="' + dataId + '"]').remove(); // Remove the corresponding card
         });
+
+        $(document).on("click", ".status-btn", function () {
+            // Get the clicked button and the parent card
+            const button = $(this);
+            const dataId = $(this).closest('[data-id]').data('id'); // Get the data-id attribute
+            const oldStatus = $('tr[data-id="' + dataId + '"]').find('td').eq(7).text(); // Get the old status from the table status column
+            const newStatus = button.data("status"); // Get the new status from the button's data-status
+
+            // disableStatusButton(dataId);
+
+            // Update the status in the card
+            const card = $(`.card[data-id="${dataId}"]`);
+            const statusElement = card.find('.card-text strong:contains("Status:")'); // Find the Status element
+
+            if (statusElement.length) {
+                // If the status element exists, update the status text
+                statusElement.text(`Status: ${newStatus}`);
+            } else {
+                // If the status element does not exist, append it to the card body
+                card.find('.card-text').append(`<br><strong>Status:</strong> ${newStatus}`);
+            }
+
+            // Update the status in the corresponding table row
+            const row = $(`tr[data-id="${dataId}"]`);
+            row.find(".status-column").text(newStatus);
+
+            // Update the hidden status input
+            row.find(".status-input").val(newStatus);
+
+            // Optional: Update total units if status affects calculation
+            const unitValue = parseInt(row.find('td').eq(2).text() || 0);
+            const totalUnitsField = $("#totalUnitsField");
+
+            if (newStatus === "Cancelled" || newStatus === "Withdrawn") {
+                if (oldStatus === "Active") { 
+                    if (parseInt(totalUnitsField.val()) <= 0) {
+                        totalUnitsField.val(0);
+                    } else { 
+                        totalUnitsField.val(parseInt(totalUnitsField.val() || 0) - unitValue);
+                    }
+                }
+            } else if (newStatus === "Active" && oldStatus !== "Active") {
+                totalUnitsField.val(parseInt(totalUnitsField.val() || 0) + unitValue);
+            }
+
+            // Optional: Log for debugging
+            console.log(`Card and row with data-id=${dataId} updated to status: ${newStatus}`);
+        });
+
+        function disableStatusButton(dataId) { 
+            const row = $('tr[data-id="' + dataId + '"]');
+            const card = $(`.card[data-id="${dataId}"]`);
+
+            // Get the status text from the row
+            const status = row.find('.status-column').text().trim();
+
+            // Disable the "Active" button if the status is "Active"
+            if (status === 'Active') {
+                row.find('.status-btn[data-status="Active"]').prop('disabled', true);
+                card.find('.status-btn[data-status="Active"]').prop('disabled', true);
+                row.find('.status-btn[data-status="Cancelled"]').prop('disabled', false);
+                card.find('.status-btn[data-status="Cancelled"]').prop('disabled', false);
+                row.find('.status-btn[data-status="Withdrawn"]').prop('disabled', false);
+                card.find('.status-btn[data-status="Withdrawn"]').prop('disabled', false);
+            } else if (status === 'Cancelled') {
+                row.find('.status-btn[data-status="Active"]').prop('disabled', false);
+                card.find('.status-btn[data-status="Active"]').prop('disabled', false);
+                row.find('.status-btn[data-status="Cancelled"]').prop('disabled', true);
+                card.find('.status-btn[data-status="Cancelled"]').prop('disabled', true);
+                row.find('.status-btn[data-status="Withdrawn"]').prop('disabled', false);
+                card.find('.status-btn[data-status="Withdrawn"]').prop('disabled', false);
+            } else if (status === 'Withdrawn') {
+                row.find('.status-btn[data-status="Active"]').prop('disabled', false);
+                card.find('.status-btn[data-status="Active"]').prop('disabled', false);
+                row.find('.status-btn[data-status="Cancelled"]').prop('disabled', false);
+                card.find('.status-btn[data-status="Cancelled"]').prop('disabled', false);
+                row.find('.status-btn[data-status="Withdrawn"]').prop('disabled', true);
+                card.find('.status-btn[data-status="Withdrawn"]').prop('disabled', true);
+            }
+        }
+
+
+        function parseTime(time) {
+            // Normalize input: Remove spaces and convert to uppercase
+            const normalizedTime = time.trim().replace(/\s+/g, "").toUpperCase();
+
+            // Match time in the format HH:mmAM/PM
+            const timeMatch = normalizedTime.match(/(\d+):(\d+)(AM|PM)/);
+            if (!timeMatch) {
+                console.error("Invalid time format:", time);
+                return null; // Return null if the format is invalid
+            }
+
+            const [hours, minutes, period] = timeMatch.slice(1); // Extract hours, minutes, and period
+            let totalMinutes = (parseInt(hours) % 12) * 60 + parseInt(minutes); // Convert hours and minutes to total minutes
+            if (period === "PM") totalMinutes += 12 * 60; // Add 12 hours for PM times
+            return totalMinutes;
+        }
+
+
+        function checkScheduleConflict(newStartTime, newEndTime, newDays) {
+            let isConflict = false;
+
+            $('tr[data-id]').each(function () {
+                const existingDays = splitSchedDays($(this).find('td:nth-child(6)').text()); // Use splitSchedDays here
+                const existingStartTime = $(this).find('td:nth-child(4)').text();
+                const existingEndTime = $(this).find('td:nth-child(5)').text();
+
+                // Compare days
+                const commonDays = existingDays.filter(day => newDays.includes(day));
+                if (commonDays.length > 0) {
+                    // Compare times
+                    const existingStart = parseTime(existingStartTime);
+                    const existingEnd = parseTime(existingEndTime);
+                    const newStart = parseTime(newStartTime);
+                    const newEnd = parseTime(newEndTime);
+
+                    if (
+                        (newStart >= existingStart && newStart < existingEnd) || // Starts during an existing schedule
+                        (newEnd > existingStart && newEnd <= existingEnd) ||     // Ends during an existing schedule
+                        (newStart <= existingStart && newEnd >= existingEnd)     // Completely overlaps
+                    ) {
+                        isConflict = true;
+                        return false; // Exit loop early if conflict is found
+                    }
+                }
+            });
+
+            return isConflict;
+        }
+
+        function splitSchedDays(schedDays) {
+            const result = [];
+            let i = 0;
+
+            while (i < schedDays.length) {
+                // Handle two-letter day codes (e.g., "TH" for Thursday)
+                if (schedDays[i] === "T" && schedDays[i + 1] === "H") {
+                    result.push("TH");
+                    i += 2; // Skip two characters
+                } else {
+                    // Handle single-letter day codes
+                    result.push(schedDays[i]);
+                    i += 1; // Skip one character
+                }
+            }
+
+            return result;
+        }
+
+        function formatISOTimeTo12Hour(isoDateTime) {
+            // Parse the ISO 8601 string into a Date object
+            const date = new Date(isoDateTime);
+
+            // Extract hours and minutes
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+
+            // Determine AM/PM
+            const period = hours >= 12 ? "pm" : "am";
+
+            // Format hours into 12-hour format
+            const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
+
+            // Format minutes with leading zero if needed
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+
+            // Return formatted time as "hh:mm tt"
+            return `${formattedHours}:${formattedMinutes} ${period}`;
+        }
+
 
     });
 </script>

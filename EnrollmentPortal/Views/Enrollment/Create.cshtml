@@ -341,8 +341,8 @@
             var endTime = $('#endTimeField').text();
             var ampm = $('#ampmField').text();
             var schedDays = $('#daysField').text();
-            var classSize = $('#classSizeField').text();
-            var maxSize = $('#maxSizeField').text();
+            var classSize = parseInt($('#classSizeField').text().trim(), 10);
+            var maxSize = parseInt($('#maxSizeField').text().trim(), 10);
             var room = $('#roomField').text();
 
             var subjectSchedId = $('#subjectSchedFileId').val();
@@ -357,6 +357,17 @@
             if (existingIds.includes(subjectSchedId)) {
                 $('#edpModalError').text('This schedule already exist in the schedule table.');
                 return;
+            }
+
+            // Validate schedule conflict
+            if (checkScheduleConflict(startTime, endTime, splitSchedDays(schedDays))) {
+                $('#edpModalError').text('Conflict detected! Please find other schedule.');
+                return; // Prevent adding the new row
+            }
+
+            if (!isNaN(classSize) && !isNaN(maxSize) && classSize >= maxSize) {
+                $('#edpModalError').text('This Schedule is full!');
+                return; // Prevent adding the new row
             }
 
             // Check if the required fields are populated
@@ -500,6 +511,74 @@
             $('tr[data-id="' + dataId + '"]').remove(); // Remove the row from the table
             $('.card[data-id="' + dataId + '"]').remove(); // Remove the corresponding card
         });
+
+        function parseTime(time) {
+            // Normalize input: Remove spaces and convert to uppercase
+            const normalizedTime = time.trim().replace(/\s+/g, "").toUpperCase();
+
+            // Match time in the format HH:mmAM/PM
+            const timeMatch = normalizedTime.match(/(\d+):(\d+)(AM|PM)/);
+            if (!timeMatch) {
+                console.error("Invalid time format:", time);
+                return null; // Return null if the format is invalid
+            }
+
+            const [hours, minutes, period] = timeMatch.slice(1); // Extract hours, minutes, and period
+            let totalMinutes = (parseInt(hours) % 12) * 60 + parseInt(minutes); // Convert hours and minutes to total minutes
+            if (period === "PM") totalMinutes += 12 * 60; // Add 12 hours for PM times
+            return totalMinutes;
+        }
+
+
+        function checkScheduleConflict(newStartTime, newEndTime, newDays) {
+            let isConflict = false;
+
+            $('tr[data-id]').each(function () {
+                const existingDays = splitSchedDays($(this).find('td:nth-child(6)').text()); // Use splitSchedDays here
+                const existingStartTime = $(this).find('td:nth-child(4)').text();
+                const existingEndTime = $(this).find('td:nth-child(5)').text();
+
+                // Compare days
+                const commonDays = existingDays.filter(day => newDays.includes(day));
+                if (commonDays.length > 0) {
+                    // Compare times
+                    const existingStart = parseTime(existingStartTime);
+                    const existingEnd = parseTime(existingEndTime);
+                    const newStart = parseTime(newStartTime);
+                    const newEnd = parseTime(newEndTime);
+
+                    if (
+                        (newStart >= existingStart && newStart < existingEnd) || // Starts during an existing schedule
+                        (newEnd > existingStart && newEnd <= existingEnd) ||     // Ends during an existing schedule
+                        (newStart <= existingStart && newEnd >= existingEnd)     // Completely overlaps
+                    ) {
+                        isConflict = true;
+                        return false; // Exit loop early if conflict is found
+                    }
+                }
+            });
+
+            return isConflict;
+        }
+
+        function splitSchedDays(schedDays) {
+            const result = [];
+            let i = 0;
+
+            while (i < schedDays.length) {
+                // Handle two-letter day codes (e.g., "TH" for Thursday)
+                if (schedDays[i] === "T" && schedDays[i + 1] === "H") {
+                    result.push("TH");
+                    i += 2; // Skip two characters
+                } else {
+                    // Handle single-letter day codes
+                    result.push(schedDays[i]);
+                    i += 1; // Skip one character
+                }
+            }
+
+            return result;
+        }
 
     });
 </script>
